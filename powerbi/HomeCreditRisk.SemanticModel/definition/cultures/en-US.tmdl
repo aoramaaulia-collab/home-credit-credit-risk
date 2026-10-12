@@ -1,0 +1,231 @@
+cultureInfo en-US
+
+	linguisticMetadata =
+			{
+			  "Version": "2.0.0",
+			  "Language": "en-US",
+			  "Entities": {
+			    "pemohon.expected_loss_dicegah": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Pemohon",
+			          "ConceptualProperty": "Expected Loss Dicegah"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Dicegah": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "pemohon.expected_loss_tersisa": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Pemohon",
+			          "ConceptualProperty": "Expected Loss Tersisa"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Tersisa": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "pemohon.default_rate": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Pemohon",
+			          "ConceptualProperty": "Default Rate"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Default rate": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Aktual": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "pemohon.expected_loss_kurva": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Pemohon",
+			          "ConceptualProperty": "Expected Loss Kurva"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Expected loss": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "pemohon.keuntungan_hilang_kurva": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Pemohon",
+			          "ConceptualProperty": "Keuntungan Hilang Kurva"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Keuntungan hilang": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "pemohon.total_biaya_kurva": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Pemohon",
+			          "ConceptualProperty": "Total Biaya Kurva"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Total biaya": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "pemohon.total_biaya_tanpa_model": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Pemohon",
+			          "ConceptualProperty": "Total Biaya Tanpa Model"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Tanpa model": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "pemohon.expected_loss_skenario": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Pemohon",
+			          "ConceptualProperty": "Expected Loss Skenario"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Expected loss": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "pemohon.keuntungan_hilang_skenario": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Pemohon",
+			          "ConceptualProperty": "Keuntungan Hilang Skenario"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Keuntungan hilang": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "pemohon.ratarata_pd": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Pemohon",
+			          "ConceptualProperty": "Rata-rata PD"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Prediksi model": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    }
+			  }
+			}
+		contentType: json
+

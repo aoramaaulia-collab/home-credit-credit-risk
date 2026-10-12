@@ -1,0 +1,14 @@
+table 'Limit Review'
+	lineageTag: b5840801-e19a-48d5-a238-5cda24644abb
+
+	column 'Limit Review'
+		dataType: int64
+		formatString: 0"%"
+		lineageTag: 88559c9c-02c6-4d72-a675-98a4fecc7fb8
+		summarizeBy: none
+		sourceColumn: [Limit Review]
+
+	partition 'Limit Review' = calculated
+		mode: import
+		source = DATATABLE("Limit Review", INTEGER, {{0}, {25}, {50}, {75}})
+

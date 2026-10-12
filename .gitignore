@@ -1,0 +1,22 @@
+# Kredensial (JANGAN di-push)
+gcp-key.json
+*.key.json
+
+# Data besar (dibuat ulang lewat NB 02)
+data/
+home-credit-default-risk/
+
+# Power BI: cache & pengaturan lokal
+powerbi/**/.pbi/localSettings.json
+powerbi/**/.pbi/cache.abf
+*.pbix.bak
+
+# Lain-lain
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+desktop.ini
+.DS_Store
+.vscode/
+04_modeling_v4.ipynb
+~$*

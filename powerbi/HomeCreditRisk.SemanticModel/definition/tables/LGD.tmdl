@@ -1,0 +1,14 @@
+table LGD
+	lineageTag: c9a3cc5e-35ae-4314-82bd-c38814667a2d
+
+	column LGD
+		dataType: int64
+		formatString: 0"%"
+		lineageTag: 2975a2f3-7369-4ea5-8851-9e1a36eb4563
+		summarizeBy: none
+		sourceColumn: [LGD]
+
+	partition LGD = calculated
+		mode: import
+		source = DATATABLE("LGD", INTEGER, {{45}, {60}, {75}})
+

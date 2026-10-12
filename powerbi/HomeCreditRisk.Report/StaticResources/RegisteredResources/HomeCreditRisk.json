@@ -1,0 +1,115 @@
+{
+  "name": "HomeCreditRisk",
+  "dataColors": [
+    "#6B7A89",
+    "#C8574F",
+    "#DDAE5B",
+    "#5E9E78",
+    "#C5CCD4",
+    "#8C96A0",
+    "#A8786F",
+    "#D9DEE3"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#3A4149",
+  "tableAccent": "#6B7A89",
+  "good": "#5E9E78",
+  "neutral": "#DDAE5B",
+  "bad": "#C8574F",
+  "textClasses": {
+    "title": {
+      "fontFace": "Segoe UI Semibold",
+      "fontSize": 12,
+      "color": "#3A4149"
+    },
+    "label": {
+      "fontFace": "Segoe UI",
+      "fontSize": 10,
+      "color": "#3A4149"
+    },
+    "callout": {
+      "fontFace": "Segoe UI Bold",
+      "fontSize": 24,
+      "color": "#3A4149"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "valueAxis": [
+          {
+            "gridlineShow": false
+          }
+        ],
+        "categoryAxis": [
+          {
+            "gridlineShow": false
+          }
+        ],
+        "background": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#FFFFFF"
+              }
+            },
+            "transparency": 0
+          }
+        ],
+        "border": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#E4E7EB"
+              }
+            },
+            "radius": 8
+          }
+        ],
+        "title": [
+          {
+            "show": true,
+            "fontColor": {
+              "solid": {
+                "color": "#3A4149"
+              }
+            },
+            "fontSize": 12
+          }
+        ],
+        "subTitle": [
+          {
+            "show": true,
+            "fontColor": {
+              "solid": {
+                "color": "#6E7781"
+              }
+            },
+            "fontSize": 9
+          }
+        ],
+        "dropShadow": [
+          {
+            "show": false
+          }
+        ]
+      }
+    },
+    "page": {
+      "*": {
+        "background": [
+          {
+            "color": {
+              "solid": {
+                "color": "#F3F4F6"
+              }
+            },
+            "transparency": 0
+          }
+        ]
+      }
+    }
+  }
+}

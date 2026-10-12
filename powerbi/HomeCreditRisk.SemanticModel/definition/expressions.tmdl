@@ -1,0 +1,5 @@
+expression DataFolder = "C:\Users\LOQ\Downloads\home-credit-project\powerbi\data\" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: d02185f7-c397-4b56-8348-9f2dcc28ff28
+
+	annotation PBI_ResultType = Text
+

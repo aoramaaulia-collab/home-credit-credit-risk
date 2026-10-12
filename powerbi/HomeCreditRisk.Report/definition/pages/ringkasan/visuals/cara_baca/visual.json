@@ -1,0 +1,177 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "name": "cara_baca",
+  "position": {
+    "x": 16,
+    "y": 790,
+    "z": 3600,
+    "width": 1248,
+    "height": 250,
+    "tabOrder": 3600
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Temuan utama",
+                    "textStyle": {
+                      "fontFamily": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif",
+                      "fontSize": "11pt",
+                      "color": "#C62F36"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "1. Kerugian turun lebih dari separuh. ",
+                    "textStyle": {
+                      "fontFamily": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif",
+                      "fontSize": "9pt",
+                      "color": "#3A4149"
+                    }
+                  },
+                  {
+                    "value": "Batas 12%: expected loss 1,24 M menjadi 0,59 M (-53%); default rate disetujui 8,07% menjadi 4,4%; 80% pengajuan tetap disetujui.",
+                    "textStyle": {
+                      "fontFamily": "'Segoe UI', wf_segoe-ui_normal, helvetica, arial, sans-serif",
+                      "fontSize": "9pt",
+                      "color": "#3A4149"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "2. Menolak terlalu banyak itu mahal. ",
+                    "textStyle": {
+                      "fontFamily": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif",
+                      "fontSize": "9pt",
+                      "color": "#3A4149"
+                    }
+                  },
+                  {
+                    "value": "Di LGD 45% hasil bersih impas karena margin nasabah baik ikut hilang. Di LGD 60-75% (kredit tanpa agunan) hemat bersih 13-21%.",
+                    "textStyle": {
+                      "fontFamily": "'Segoe UI', wf_segoe-ui_normal, helvetica, arial, sans-serif",
+                      "fontSize": "9pt",
+                      "color": "#3A4149"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "3. Zona Review = tuas profit. ",
+                    "textStyle": {
+                      "fontFamily": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif",
+                      "fontSize": "9pt",
+                      "color": "#3A4149"
+                    }
+                  },
+                  {
+                    "value": "Set \"Limit zona Review\" 50%: 12% pemohon berisiko menengah tetap dilayani dengan limit kecil, hemat bersih naik.",
+                    "textStyle": {
+                      "fontFamily": "'Segoe UI', wf_segoe-ui_normal, helvetica, arial, sans-serif",
+                      "fontSize": "9pt",
+                      "color": "#3A4149"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "4. Skor eksternal pembeda terkuat. ",
+                    "textStyle": {
+                      "fontFamily": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif",
+                      "fontSize": "9pt",
+                      "color": "#3A4149"
+                    }
+                  },
+                  {
+                    "value": "D1-D2 (20% pemohon) menyumbang 46% gagal bayar. Aksi: verifikasi tambahan dan uang muka untuk D1-D2.",
+                    "textStyle": {
+                      "fontFamily": "'Segoe UI', wf_segoe-ui_normal, helvetica, arial, sans-serif",
+                      "fontSize": "9pt",
+                      "color": "#3A4149"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "5. Karyawan = kerugian terbesar. ",
+                    "textStyle": {
+                      "fontFamily": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif",
+                      "fontSize": "9pt",
+                      "color": "#3A4149"
+                    }
+                  },
+                  {
+                    "value": "Sekitar 60% potensi kerugian; PNS dan pensiunan paling aman (5-6%), prioritaskan lewat kerja sama payroll.",
+                    "textStyle": {
+                      "fontFamily": "'Segoe UI', wf_segoe-ui_normal, helvetica, arial, sans-serif",
+                      "fontSize": "9pt",
+                      "color": "#3A4149"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -1,0 +1,14 @@
+table 'Batas Reject'
+	lineageTag: 14535be1-5dc4-4311-b156-5445fadf92fb
+
+	column 'Batas Reject'
+		dataType: int64
+		formatString: 0"%"
+		lineageTag: d84e7e7e-4a1b-408a-b32b-72157216f830
+		summarizeBy: none
+		sourceColumn: [Value]
+
+	partition 'Batas Reject' = calculated
+		mode: import
+		source = GENERATESERIES(10, 60, 1)
+

@@ -1,0 +1,14 @@
+table 'Kurva Threshold'
+	lineageTag: 7af93ce7-0d05-4ba0-a8aa-b0d413f5ce93
+
+	column Threshold
+		dataType: double
+		formatString: 0.00
+		lineageTag: b5db45be-7b5b-47ed-802f-c90688876c9f
+		summarizeBy: none
+		sourceColumn: [Value]
+
+	partition 'Kurva Threshold' = calculated
+		mode: import
+		source = GENERATESERIES(0.03, 0.45, 0.01)
+

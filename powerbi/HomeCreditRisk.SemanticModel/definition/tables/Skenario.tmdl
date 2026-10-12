@@ -1,0 +1,22 @@
+table Skenario
+	lineageTag: f4c9d586-194f-48f8-8961-460fb196d1fb
+
+	column Skenario
+		dataType: string
+		lineageTag: d62ebdaf-42d7-4f63-bd98-3884cb084e8a
+		summarizeBy: none
+		sourceColumn: [Skenario]
+		sortByColumn: Urut
+
+	column Urut
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 7420603c-7cf6-4f96-a66f-aa77174014fa
+		summarizeBy: none
+		sourceColumn: [Urut]
+
+	partition Skenario = calculated
+		mode: import
+		source = DATATABLE("Skenario", STRING, "Urut", INTEGER, {{"Tanpa model", 1}, {"Dengan model", 2}})
+

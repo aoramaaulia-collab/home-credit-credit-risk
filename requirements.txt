@@ -1,0 +1,17 @@
+pandas
+pyarrow
+google-cloud-bigquery
+db-dtypes
+matplotlib
+seaborn
+scipy
+nbformat
+scikit-learn>=1.4
+lightgbm
+xgboost
+shap
+joblib
+tqdm
+duckdb
+streamlit>=1.50
+plotly

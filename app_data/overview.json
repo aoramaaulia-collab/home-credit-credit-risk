@@ -1,0 +1,9 @@
+{
+  "jumlah_pengajuan": 307511,
+  "jumlah_gagal_bayar": 24825,
+  "default_rate": 0.08072881945686496,
+  "total_kredit": 184207081472.0,
+  "rata2_kredit": 599026.0,
+  "expected_loss_baseline": 6231083520.0,
+  "LGD": 0.45
+}

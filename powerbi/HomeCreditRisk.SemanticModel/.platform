@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "HomeCreditRisk"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "b2fccbaa-8b07-4941-bc60-0c8c07d5b946"
+  }
+}
