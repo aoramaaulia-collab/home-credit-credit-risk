@@ -47,7 +47,19 @@ python -m streamlit run streamlit_app.py
 
 Notebook 02 membutuhkan dataset mentah dan kredensial BigQuery sendiri (`gcp-key.json`, tidak disertakan di repo).
 
-**Dashboard Power BI:** buka `powerbi/HomeCreditRisk.pbip` di Power BI Desktop. Jika lokasi folder berbeda, ubah parameter `DataFolder` (Transform data > Manage parameters) ke path folder `powerbi/data` di komputer Anda, lalu Refresh.
+## Dashboard Power BI
+
+### 1. Dampak Model Risiko Kredit
+![Dampak Model Risiko Kredit](docs/dashboard_ringkasan.png)
+
+Halaman ini membandingkan kerugian kredit tanpa model dan dengan model. Kerugian yang diperkirakan turun dari 1,24 M menjadi 0,59 M (turun 53%), artinya model berhasil mencegah lebih dari separuh potensi kerugian. Pengaturan batas approve, batas reject, LGD, dan limit zona review bisa diubah lewat filter di bagian atas untuk melihat dampaknya pada biaya.
+
+### 2. Profil Risiko Pemohon
+![Profil Risiko Pemohon](docs/dashboard_profil.png)
+
+Halaman ini menunjukkan kelompok pemohon mana yang paling berisiko gagal bayar, berdasarkan usia, pendidikan, rating wilayah, dan jenis pekerjaan. Pemohon di bawah 25 tahun dan pemilik pekerjaan tertentu punya tingkat gagal bayar lebih tinggi, sehingga bisa dipakai untuk menentukan limit awal dan syarat tambahan.
+
+File proyek: `powerbi/HomeCreditRisk.pbip` (buka di Power BI Desktop untuk versi interaktif, hanya tersedia di Windows).
 
 ## Catatan
 
