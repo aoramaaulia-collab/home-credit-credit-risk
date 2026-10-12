@@ -2,8 +2,7 @@
 
 Proyek akhir **Home Credit Indonesia x Rakamin (VIX Data Scientist)**. Tujuannya membantu tim Credit Risk **memisahkan pemohon yang mampu bayar dan yang berisiko gagal bayar sejak tahap pengajuan**, lalu menerjemahkan skor model menjadi kebijakan yang bisa diukur dalam uang.
 
-**Demo Streamlit:** (isi link setelah deploy)  
-**Panduan upload repo:** [PANDUAN_GITHUB.md](PANDUAN_GITHUB.md)
+**Demo Streamlit:** [(Aplikasi deploy)](https://home-credit-credit-risk-emvn4romwxnpwuyke5nquy.streamlit.app/page_scoring)  
 
 ## Ringkasan hasil
 
