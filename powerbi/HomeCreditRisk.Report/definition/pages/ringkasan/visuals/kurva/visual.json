@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "kurva",
   "position": {
     "x": 16,
-    "y": 206,
-    "z": 3100,
-    "width": 741.6,
-    "height": 280,
-    "tabOrder": 3100
+    "y": 270,
+    "z": 27000,
+    "height": 272,
+    "width": 742.8,
+    "tabOrder": 24000
   },
   "visual": {
     "visualType": "lineChart",
@@ -130,7 +130,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "10D"
                 }
               }
             },
@@ -182,7 +182,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "10D"
                 }
               }
             }
@@ -223,7 +223,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "10D"
                 }
               }
             },
@@ -268,7 +268,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "10D"
                 }
               }
             },
@@ -375,7 +375,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "11D"
+                  "Value": "12D"
                 }
               }
             },
@@ -420,7 +420,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "10D"
                 }
               }
             },
@@ -445,7 +445,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Titik terendah garis abu tua = biaya minimum'"
+                  "Value": "'Threshold turun: merah (kerugian) turun, amber (margin hilang) naik. Titik terendah garis abu tua = biaya minimum'"
                 }
               }
             }

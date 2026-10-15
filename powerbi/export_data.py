@@ -12,6 +12,7 @@ ts['USIA_URUT'] = ts.KELOMPOK_USIA.map({'< 25': 1, '25-30': 2, '30-35': 3, '35-4
 ts['PENDIDIKAN'] = ts.PENDIDIKAN.fillna('Lainnya')
 ts['PENDIDIKAN_URUT'] = ts.PENDIDIKAN.map({'SMP': 1, 'SMA/SMK': 2, 'Kuliah (tidak lulus)': 3, 'Sarjana': 4}).fillna(5).astype(int)
 ts['RATING_WILAYAH'] = ts.RATING_WILAYAH.fillna('Tidak diketahui')
+vc = ts.PEKERJAAN.value_counts(); ts['PEKERJAAN'] = ts.PEKERJAAN.where(ts.PEKERJAAN.map(vc) >= 300, 'Lainnya')
 ts['STATUS'] = ts.TARGET.map({1: 'Gagal bayar', 0: 'Lancar'})
 ts[ts.select_dtypes('float32').columns] = ts.select_dtypes('float32').astype('float64')
 ts = ts.drop(columns=['SKOR_EKSTERNAL_RATA2']).round({'PD': 6, 'KEUNTUNGAN_POTENSIAL': 2, 'TENOR_BULAN': 2, 'AMT_ANNUITY': 2, 'AMT_CREDIT': 2})

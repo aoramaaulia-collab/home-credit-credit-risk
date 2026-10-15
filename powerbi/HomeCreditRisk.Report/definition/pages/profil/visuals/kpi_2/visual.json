@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "kpi_2",
   "position": {
-    "x": 520,
-    "y": 90,
-    "z": 1900,
-    "width": 240,
-    "height": 68.64,
-    "tabOrder": 1900
+    "x": 855,
+    "y": 74,
+    "z": 14000,
+    "height": 67.2,
+    "width": 199.5,
+    "tabOrder": 11000
   },
   "visual": {
     "visualType": "card",
@@ -155,7 +155,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Rata-rata PD'"
+                  "Value": "'Rata-rata PD model'"
                 }
               }
             },

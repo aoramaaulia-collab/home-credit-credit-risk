@@ -1,0 +1,456 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Artikel Medium - Credit Risk Scoring</title><style>body{max-width:760px;margin:40px auto;padding:0 16px;font-family:Georgia,serif;font-size:19px;line-height:1.65;color:#242424}
+img{max-width:100%}table{border-collapse:collapse;font-size:15px}td,th{border:1px solid #ddd;padding:6px}pre{background:#f4f4f4;padding:12px;overflow:auto;font-size:14px}
+.note{background:#fff4e5;padding:12px 16px;border-radius:8px;font-family:Arial,sans-serif;font-size:15px}</style></head><body>
+<div class="note">Cara memindahkan ke Medium: buka file ini di browser, tekan Ctrl+A lalu Ctrl+C, kemudian tempel (Ctrl+V) di editor Medium baru. Judul, subjudul, tabel, kode, dan gambar ikut tersalin (gambar diambil dari GitHub, jadi pastikan folder docs/assets sudah di-push). Hapus kotak catatan ini setelah menempel.</div>
+<h1>Credit Risk Scoring Home Credit: Dari Prediksi Gagal Bayar ke Kebijakan Kredit yang Terukur dalam Uang</h1>
+<p><em>Bagaimana sebuah model machine learning diubah menjadi kebijakan Approve, Review, dan Reject yang dampaknya bisa dihitung dalam nominal, lengkap dengan alasan di balik setiap keputusan teknis dan keterbatasannya yang jujur.</em></p>
+<hr />
+<h2>Pembuka: menolak orang yang salah juga ada harganya</h2>
+<p>Bayangkan Anda bekerja di tim risiko kredit sebuah perusahaan pembiayaan. Setiap hari ada ribuan pengajuan masuk: ada yang ingin mencicil ponsel, ada yang butuh pinjaman tunai untuk modal usaha, ada yang ingin kartu kredit. Sebagian besar dari mereka akan membayar dengan lancar. Namun sebagian kecil akan mengalami kesulitan membayar, dan setiap pinjaman yang macet berarti uang perusahaan hilang.</p>
+<p>Respons paling naluriah adalah memperketat seleksi: tolak saja semua yang terlihat meragukan. Masalahnya, setiap penolakan juga punya harga. Nasabah baik yang ditolak tidak akan membayar bunga, dan pendapatan itu hilang begitu saja, sering kali pindah ke kompetitor. Jadi pertanyaan sebenarnya bukan "bagaimana menolak sebanyak mungkin orang berisiko", melainkan "di titik mana kita harus menarik garis supaya total kerugian perusahaan paling masuk akal".</p>
+<p>Artikel ini menceritakan proyek akhir saya di program <strong>Home Credit Indonesia x Rakamin Academy, Data Scientist Project Based Virtual Internship</strong>. Saya membangun model probabilitas gagal bayar (probability of default, PD) dari data 307.511 pemohon historis, lalu menerjemahkan skor model menjadi kebijakan tiga zona yang dampaknya diukur dalam uang. Hasil akhirnya juga dikemas dalam aplikasi Streamlit dan dashboard Power BI yang bisa dipakai langsung oleh orang non-teknis.</p>
+<p>Saya akan menjelaskan setiap langkah beserta alasannya, termasuk eksperimen yang ternyata tidak membantu. Menurut saya, bagian "apa yang tidak berhasil" sama pentingnya dengan bagian "apa yang berhasil".</p>
+<p><img alt="Alur proyek" src="https://raw.githubusercontent.com/aoramaaulia-collab/home-credit-credit-risk/main/docs/assets/fig_alur.png" />
+<em>Alur proyek dari CSV mentah sampai aplikasi Streamlit dan dashboard Power BI.</em></p>
+<hr />
+<h2>Masalah bisnis: dua jenis kesalahan dengan harga yang berbeda</h2>
+<p>Dari 307.511 pemohon berlabel, sebanyak <strong>24.825 orang (8,07%)</strong> mengalami kesulitan membayar (dalam dataset ditandai <code>TARGET = 1</code>). Total pinjaman seluruh pemohon mencapai <strong>184,2 miliar unit mata uang dataset</strong>, dan expected loss historis dari pinjaman yang gagal bayar, dengan asumsi LGD 45%, sekitar <strong>6,23 miliar</strong>. Catatan kecil: dataset tidak menyebut negara atau mata uangnya, sehingga semua nilai uang di artikel ini saya tulis dalam "unit mata uang dataset", dengan M berarti miliar.</p>
+<p>Model klasifikasi selalu bisa salah dengan dua cara:</p>
+<ol>
+<li><strong>False Negative (FN)</strong>: pemohon yang nantinya gagal bayar justru diprediksi aman dan disetujui. Kerugiannya adalah bagian pinjaman yang tidak kembali.</li>
+<li><strong>False Positive (FP)</strong>: pemohon yang sebenarnya akan membayar lancar justru diprediksi berisiko dan ditolak. Kerugiannya adalah keuntungan bunga yang tidak jadi diperoleh.</li>
+</ol>
+<p>Supaya perbandingan keduanya tidak sekadar kira-kira, saya menuliskan biayanya sebagai rumus sederhana:</p>
+<pre><code class="language-python"># Biaya per pemohon (dalam unit mata uang dataset)
+biaya_FN = pinjaman * LGD                                  # LGD skenario dasar 45%
+biaya_FP = (pinjaman / 2) * margin_bunga_bersih * tenor     # margin 13,6% per tahun, tenor dalam tahun
+</code></pre>
+<p>Pada biaya FP, pinjaman dibagi dua karena pokok dicicil, sehingga rata-rata saldo yang menghasilkan bunga selama tenor kira-kira setengah dari pokok awal.</p>
+<p><strong>Dari mana angka 13,6%?</strong> Angka ini adalah margin bunga bersih yang saya hitung dari data publik Home Credit Indonesia: pendapatan bunga bersih Rp1.261.790 juta dibagi volume pembiayaan Rp9,3 triliun (Laporan Keberlanjutan Home Credit Indonesia 2023; Kontan, 12 Februari 2024).</p>
+<p><strong>Dari mana LGD 45%?</strong> Loss Given Default (porsi pinjaman yang benar-benar hilang ketika nasabah gagal bayar) tidak dipublikasikan. Karena itu saya memakai 45% sebagai batas bawah yang konservatif, mengacu pada nilai yang dipakai pendekatan foundation IRB dalam kerangka Basel untuk eksposur senior tanpa agunan. Agar kesimpulan tidak bergantung pada satu asumsi, saya juga menguji skenario 60% dan 75%.</p>
+<p>Hasilnya, <strong>satu FN rata-rata 3,7 sampai 6,1 kali lebih mahal daripada satu FP</strong>. Inilah fondasi seluruh keputusan teknis berikutnya: model harus lebih fokus menangkap calon gagal bayar, tetapi tidak boleh sembarangan menolak nasabah baik karena itu juga ada harganya.</p>
+<hr />
+<h2>Kenapa F2-score dan PR curve, bukan akurasi?</h2>
+<h3>Akurasi menipu pada data yang tidak seimbang</h3>
+<p>Dengan komposisi 92% lancar dan 8% gagal bayar, model "bodoh" yang selalu menjawab "lancar" sudah mendapat akurasi sekitar 92%. Angkanya tampak hebat, padahal model itu tidak menangkap satu pun calon gagal bayar. Jadi akurasi tidak bisa dipakai.</p>
+<h3>F2-score: recall dibobot empat kali precision</h3>
+<p>Dua istilah yang perlu dipahami dulu:</p>
+<ul>
+<li><strong>Recall</strong>: dari semua orang yang benar-benar gagal bayar, berapa persen yang berhasil ditangkap model.</li>
+<li><strong>Precision</strong>: dari semua orang yang ditandai berisiko oleh model, berapa persen yang memang gagal bayar.</li>
+</ul>
+<p>Analogi sederhananya seperti petugas pemeriksaan di bandara. Recall adalah seberapa banyak barang terlarang yang berhasil ditemukan. Precision adalah seberapa sering koper yang dibongkar memang berisi barang terlarang. Bandara lebih takut barang terlarang lolos daripada membongkar beberapa koper yang ternyata aman, sehingga recall lebih diutamakan, tetapi kalau terlalu banyak koper dibongkar, antrean macet dan penumpang kesal.</p>
+<p>F-beta score menggabungkan keduanya. Dengan beta = 2, recall dianggap empat kali lebih penting daripada precision (bobotnya beta kuadrat). Ini sejalan dengan temuan bahwa FN beberapa kali lebih mahal daripada FP.</p>
+<h3>PR curve: jujur pada kelas minoritas</h3>
+<p>Saya memakai <strong>Precision-Recall curve</strong> dan luas di bawahnya (<strong>PR-AUC</strong>) sebagai metrik utama untuk memilih model, dengan ROC-AUC, Gini, KS, dan Brier score sebagai pembanding. Alasannya dijelaskan dengan baik oleh Saito dan Rehmsmeier (2015): pada data tidak seimbang, ROC curve bisa terlihat bagus karena terbantu oleh banyaknya nasabah lancar yang mudah dikenali, sedangkan PR curve hanya fokus pada kelas yang kita pedulikan, yaitu gagal bayar. Patokan PR-AUC model acak juga mudah diingat: sama dengan proporsi kelas positif, di sini <strong>0,081</strong>.</p>
+<hr />
+<h2>Data dan alur ETL</h2>
+<p>Dataset terdiri dari <strong>7 tabel</strong> dengan ukuran sekitar <strong>2,7 GB CSV</strong>: <code>application_train/test</code> (data pengajuan utama), <code>bureau</code> dan <code>bureau_balance</code> (riwayat kredit di lembaga lain), <code>previous_application</code> (pengajuan sebelumnya di Home Credit), <code>installments_payments</code> (riwayat pembayaran cicilan), <code>POS_CASH_balance</code> (saldo bulanan pinjaman barang dan tunai), serta <code>credit_card_balance</code> (saldo bulanan kartu kredit).</p>
+<p>Alurnya seperti ini, dan setiap langkah punya alasan:</p>
+<ol>
+<li><strong>CSV ke Parquet (staging).</strong> Parquet adalah format kolom yang terkompresi, sehingga ukurannya sekitar 8 kali lebih kecil dan jauh lebih cepat dibaca. Tipe data juga ikut tersimpan, jadi tidak perlu ditebak ulang setiap kali file dibuka.</li>
+<li><strong>Parquet ke BigQuery (Sandbox).</strong> Tabel riwayat seperti cicilan dan saldo bulanan berisi jutaan baris. Mengagregasinya di gudang data dengan SQL lebih efisien daripada memaksa laptop memprosesnya di memori.</li>
+<li><strong>SQL data mart.</strong> Semua riwayat diringkas menjadi satu baris per pemohon (<code>SK_ID_CURR</code>). Contoh fitur yang dihasilkan: persentase cicilan yang telat dalam 12 bulan terakhir, utilisasi kartu kredit, total utang aktif di lembaga lain, dan jumlah penolakan pengajuan sebelumnya. Data mart versi akhir (v2) berisi <strong>184 kolom per pemohon</strong>.</li>
+<li><strong>Uji lokal dengan DuckDB.</strong> Query yang sama diuji dulu secara lokal dengan DuckDB sebelum dijalankan di BigQuery, supaya kesalahan logika ketahuan lebih awal tanpa menghabiskan kuota.</li>
+<li><strong>Python.</strong> Hasil data mart ditarik ke Python untuk EDA dan modeling.</li>
+</ol>
+<p>Pemisahan ini juga membuat proyek lebih mudah dipelihara: logika agregasi tersimpan sebagai SQL yang bisa dibaca dan diaudit, bukan tersebar di banyak sel notebook.</p>
+<hr />
+<h2>EDA: dua insight utama dan temuan pendukung</h2>
+<h3>Insight 1: skor eksternal adalah pembeda terkuat</h3>
+<p>Dataset menyediakan tiga skor dari sumber eksternal (semacam skor kredit dari lembaga lain). Ketika pemohon diurutkan berdasarkan skor ini lalu dibagi menjadi sepuluh kelompok sama besar (desil), polanya sangat jelas.</p>
+<p><img alt="Default rate per desil" src="https://raw.githubusercontent.com/aoramaaulia-collab/home-credit-credit-risk/main/docs/assets/fig_desil.png" />
+<em>Default rate per desil skor eksternal. D1 adalah 10% pemohon dengan skor terendah; D1 dan D2 menyumbang 46% seluruh gagal bayar.</em></p>
+<p>Default rate turun konsisten dari <strong>22,9% di D1</strong> menjadi <strong>2,0% di D10</strong>. Artinya, <strong>20% pemohon berskor terendah (D1 dan D2) menyumbang 46% seluruh gagal bayar</strong>. Skor ini juga memiliki Information Value tertinggi (0,61), ukuran yang biasa dipakai di industri kredit untuk menilai daya pembeda suatu variabel.</p>
+<p><strong>Aksi bisnis:</strong> pemohon di D1-D2 perlu verifikasi tambahan atau uang muka, sedangkan D8-D10 bisa diberi jalur persetujuan cepat agar pengalaman nasabah baik tidak terhambat.</p>
+<h3>Insight 2: sinyal terlilit utang</h3>
+<p>Insight kedua datang dari tabel riwayat yang diolah di data mart.</p>
+<p><img alt="Sinyal terlilit utang" src="https://raw.githubusercontent.com/aoramaaulia-collab/home-credit-credit-risk/main/docs/assets/fig_utang.png" />
+<em>Kiri: default rate menurut pemakaian limit kartu kredit. Kanan: menurut jumlah pinjaman aktif di lembaga lain.</em></p>
+<ul>
+<li><strong>Utilisasi kartu kredit</strong>: 0% berisiko 5,4%, 1-30% berisiko 6,4%, 30-60% berisiko 8,9%, 60-90% berisiko 13,0%, dan di atas 90% berisiko 19,3%, atau <strong>3,6 kali</strong> kelompok 0%.</li>
+<li><strong>Pinjaman aktif di lembaga lain</strong>: tanpa pinjaman 5,7%, lalu naik bertahap sampai <strong>13,4% untuk 6 pinjaman atau lebih (2,4 kali)</strong>.</li>
+<li><strong>Riwayat telat 12 bulan terakhir</strong>: yang tidak pernah telat 6,7%, sedangkan yang telat di lebih dari 15% cicilannya 13,0%.</li>
+</ul>
+<p><strong>Aksi bisnis:</strong> pemohon seperti ini belum tentu harus ditolak. Banyak di antara mereka tetap membayar. Yang lebih masuk akal adalah menyesuaikan limit atau tenor (inilah yang nantinya menjadi zona Review), bukan langsung menolak.</p>
+<h3>Temuan lain</h3>
+<ul>
+<li>Usia di bawah 25 tahun berisiko 12,6%, sedangkan usia 60 tahun ke atas 4,7%.</li>
+<li>Lulusan sarjana 5,4%, lulusan SMP 11,4%.</li>
+<li>Pemohon di wilayah dengan rating 3 berisiko 2,3 kali wilayah rating 1.</li>
+<li>Pekerjaan low-skill laborers 16%, security staff 13%, drivers 12%, sedangkan PNS dan pensiunan hanya 5-6%.</li>
+<li>Pinjaman tunai lebih berisiko daripada pinjaman revolving (8,3% dibanding 5,6%).</li>
+</ul>
+<p>Temuan ini memberi gambaran segmen mana yang aman diprioritaskan dan mana yang perlu perhatian lebih, sekaligus menjadi bahan untuk mengecek apakah model belajar pola yang masuk akal.</p>
+<hr />
+<h2>Preprocessing dan feature engineering</h2>
+<h3>Membersihkan nilai yang menyamar</h3>
+<p>Beberapa nilai di dataset bukan data asli, melainkan kode khusus:</p>
+<ul>
+<li><code>DAYS_EMPLOYED = 365243</code> (sekitar seribu tahun bekerja) ternyata menandai pensiunan atau orang tidak bekerja. Nilainya saya ubah menjadi kosong dan ditambah penanda <code>IS_NOT_EMPLOYED</code>.</li>
+<li><code>CODE_GENDER = XNA</code> dan <code>NAME_FAMILY_STATUS = Unknown</code> diubah menjadi kosong; <code>ORGANIZATION_TYPE = XNA</code> diubah menjadi "Not employed".</li>
+<li>Pemohon tanpa riwayat di suatu tabel diberi nilai 0 dan penanda <code>HAS_BUREAU</code>, <code>HAS_PREV</code>, atau <code>HAS_CC</code>, supaya model bisa membedakan "tidak punya utang" dengan "tidak punya catatan".</li>
+</ul>
+<h3>Mencegah kebocoran data (leakage)</h3>
+<p>Leakage terjadi ketika model "mengintip" informasi yang sebenarnya belum tersedia saat keputusan dibuat. Hasilnya, model tampak hebat di atas kertas tetapi gagal di dunia nyata. Langkah yang saya ambil:</p>
+<ul>
+<li>Kolom yang diperbarui setelah tanggal pengajuan dibuang, misalnya <code>DAYS_CREDIT_UPDATE</code> di tabel bureau.</li>
+<li>Kode 365243 di <code>previous_application</code> juga dianggap kosong.</li>
+<li>Data dibagi <strong>80/20 secara stratified sebelum model mempelajari apa pun</strong>, termasuk sebelum imputasi dan encoding. Evaluasi selama pengembangan memakai cross-validation 3-fold di data latih saja.</li>
+</ul>
+<h3>Fitur baru</h3>
+<p>Beberapa fitur dibuat karena lebih bermakna secara bisnis daripada angka mentahnya: <code>EXT_SOURCE_MEAN</code>, <code>EXT_SOURCE_MIN</code>, dan jumlah skor eksternal yang kosong; usia dan lama bekerja dalam tahun serta rasionya; rasio cicilan terhadap pendapatan (<code>ANNUITY_INCOME</code>), pinjaman terhadap pendapatan, pinjaman terhadap harga barang (<code>CREDIT_GOODS</code>); perkiraan tenor (<code>CREDIT_TERM</code>); pendapatan per anggota keluarga; jumlah dokumen yang dilampirkan (<code>DOC_COUNT</code>); penanda uang muka; jumlah ketidakcocokan alamat; rasio utang di lembaga lain terhadap pendapatan; serta lama sejak ganti nomor HP, alamat, dan KTP.</p>
+<h3>Kolom yang dibuang, dan alasannya</h3>
+<table>
+<thead>
+<tr>
+<th>Kolom</th>
+<th>Alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CODE_GENDER</code></td>
+<td>Keadilan dan perlindungan konsumen (POJK 22/2023)</td>
+</tr>
+<tr>
+<td><code>AMT_GOODS_PRICE</code></td>
+<td>Redundan dengan <code>AMT_CREDIT</code> (VIF 115); informasinya disimpan sebagai rasio</td>
+</tr>
+<tr>
+<td><code>REGION_RATING_CLIENT</code></td>
+<td>Redundan dengan versi yang memperhitungkan kota (VIF 10,7)</td>
+</tr>
+<tr>
+<td><code>FLAG_MOBIL</code>, <code>FLAG_CONT_MOBILE</code></td>
+<td>Hampir konstan, tidak membedakan apa pun</td>
+</tr>
+<tr>
+<td>Jam dan hari pengajuan</td>
+<td>Atribut proses, bukan karakter pemohon</td>
+</tr>
+<tr>
+<td>28 kolom bangunan <code>_MODE</code> dan <code>_MEDI</code></td>
+<td>Korelasi di atas 0,99 dengan versi <code>_AVG</code></td>
+</tr>
+<tr>
+<td><code>OBS_60</code> dan <code>DEF_60</code></td>
+<td>Redundan dengan versi 30 hari</td>
+</tr>
+<tr>
+<td>20 kolom <code>FLAG_DOCUMENT</code></td>
+<td>Diringkas menjadi <code>DOC_COUNT</code></td>
+</tr>
+</tbody>
+</table>
+<p>Total fitur yang masuk model: <strong>142</strong>.</p>
+<h3>Pipeline preprocessing</h3>
+<p>Semua transformasi dibungkus dalam satu <code>ColumnTransformer</code> scikit-learn, sehingga langkah yang sama persis dipakai saat latihan, evaluasi, dan di aplikasi:</p>
+<pre><code class="language-python">preprocess = ColumnTransformer([
+    (&quot;miring&quot;,   median_impute + winsorize_p1_p99 + log1p + StandardScaler, kolom_miring),
+    (&quot;outlier&quot;,  median_impute + RobustScaler,                              kolom_outlier),
+    (&quot;numerik&quot;,  median_impute + StandardScaler,                            kolom_lain),
+    (&quot;biner&quot;,    &quot;passthrough&quot;,                                             kolom_biner),
+    (&quot;ordinal&quot;,  OrdinalEncoder,                                            [&quot;pendidikan&quot;]),
+    (&quot;onehot&quot;,   OneHotEncoder,                                             kategori_maks_10),
+    (&quot;target&quot;,   TargetEncoder (cross-fitted),                              [&quot;OCCUPATION_TYPE&quot;, &quot;ORGANIZATION_TYPE&quot;]),
+])  # ditambah MissingIndicator untuk kolom yang punya nilai kosong
+</code></pre>
+<p>Kode di atas adalah sketsa agar alurnya mudah dibaca, bukan kode yang bisa langsung dijalankan. Poin pentingnya: karena semua langkah ada di dalam pipeline, cross-validation menghitung ulang statistik (median, batas winsorizing, target encoding) di setiap lipatan, sehingga tidak ada kebocoran dari data validasi.</p>
+<hr />
+<h2>Modeling: empat model, banyak eksperimen, sedikit kejutan</h2>
+<h3>Perbandingan model</h3>
+<p>Saya membandingkan empat model dengan dua pembanding sederhana, memakai prediksi out-of-fold di data latih.</p>
+<p><img alt="Perbandingan model" src="https://raw.githubusercontent.com/aoramaaulia-collab/home-credit-credit-risk/main/docs/assets/fig_model.png" />
+<em>PR-AUC hasil validasi silang di data latih. LightGBM terbaik, sekitar 3,5 kali tebakan acak.</em></p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>PR-AUC (CV)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tebakan acak</td>
+<td>0,081</td>
+</tr>
+<tr>
+<td>Aturan skor eksternal</td>
+<td>0,188</td>
+</tr>
+<tr>
+<td>Random Forest</td>
+<td>0,252</td>
+</tr>
+<tr>
+<td>Logistic Regression</td>
+<td>0,261</td>
+</tr>
+<tr>
+<td>XGBoost</td>
+<td>0,279</td>
+</tr>
+<tr>
+<td>LightGBM</td>
+<td>0,280</td>
+</tr>
+<tr>
+<td>Ensemble</td>
+<td>0,280</td>
+</tr>
+</tbody>
+</table>
+<p>LightGBM (Ke dkk., 2017) menang tipis atas XGBoost. Ensemble tidak memberi tambahan yang berarti, sehingga tidak diadopsi: menambah kerumitan tanpa manfaat bukan pertukaran yang baik.</p>
+<h3>Class weight: tidak membantu</h3>
+<p>Pendekatan populer untuk data tidak seimbang adalah memberi bobot lebih pada kelas minoritas. Saya mengujinya di semua model. Hasilnya, PR-AUC tidak naik, sedangkan <strong>Brier score menjadi 2,5 sampai 3 kali lebih buruk</strong>. Brier score mengukur seberapa akurat probabilitas yang dihasilkan. Karena kebijakan nominal membutuhkan probabilitas yang realistis (PD 10% harus benar-benar berarti sekitar 10 dari 100 orang gagal bayar), class weight tidak dipakai. Masalah ketidakseimbangan cukup ditangani lewat pemilihan threshold.</p>
+<h3>Tuning</h3>
+<p>Tuning memakai <code>RandomizedSearchCV</code> dengan metrik <code>average_precision</code> (setara PR-AUC): 15 kombinasi untuk Logistic Regression, 10 untuk Random Forest, 30 untuk LightGBM, dan 20 untuk XGBoost. Parameter preprocessing juga ikut di-tuning. Konfigurasi LightGBM terbaik: <code>n_estimators</code> 1600, <code>learning_rate</code> 0,03, <code>num_leaves</code> 15, <code>max_depth</code> 6, <code>min_child_samples</code> 50, <code>subsample</code> 0,7, <code>colsample_bytree</code> 0,3, <code>reg_alpha</code> 5, <code>reg_lambda</code> 10, dan <code>min_split_gain</code> 0,1. Polanya konsisten: model yang menang adalah model dengan pohon kecil, belajar pelan, dan regularisasi kuat, tanda bahwa sinyal di data ini halus dan mudah ter-overfit.</p>
+<h3>Eksperimen yang tidak diadopsi</h3>
+<ul>
+<li><strong>Seleksi fitur otomatis</strong> (<code>SelectFromModel</code> yang dijalankan di dalam CV): menyisakan 100 fitur teratas menurunkan PR-AUC 0,002, dan 60 fitur teratas menurunkan 0,006.</li>
+<li><strong>Lima fitur tambahan</strong>: hanya menaikkan PR-AUC 0,001, di bawah batas adopsi yang saya tetapkan sejak awal, yaitu 0,002.</li>
+</ul>
+<p>Menetapkan batas adopsi sebelum eksperimen membantu saya tidak tergoda menambahkan sesuatu hanya karena angkanya naik sedikit akibat kebetulan.</p>
+<h3>Keadilan: gender tetap dikeluarkan</h3>
+<p>Saya juga menguji apa yang terjadi jika gender dimasukkan. PR-AUC hanya naik 0,002. Manfaat sekecil itu tidak sebanding dengan risiko diskriminasi dan ketidaksesuaian dengan prinsip perlakuan adil dalam POJK 22/2023 tentang Pelindungan Konsumen dan Masyarakat di Sektor Jasa Keuangan. Gender tetap dikeluarkan.</p>
+<hr />
+<h2>Evaluasi di data uji</h2>
+<p>Model final diuji pada <strong>20% data yang disisihkan sejak awal (61.503 pemohon)</strong>, yang tidak pernah dipakai untuk melatih maupun memilih model.</p>
+<table>
+<thead>
+<tr>
+<th>Metrik</th>
+<th>Nilai</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PR-AUC</td>
+<td>0,288 (CV 0,280), sekitar 3,6 kali tebakan acak</td>
+</tr>
+<tr>
+<td>ROC-AUC</td>
+<td>0,793</td>
+</tr>
+<tr>
+<td>Gini</td>
+<td>0,586</td>
+</tr>
+<tr>
+<td>KS</td>
+<td>0,441</td>
+</tr>
+<tr>
+<td>Brier score</td>
+<td>0,0655</td>
+</tr>
+</tbody>
+</table>
+<p>Nilai di data uji sedikit di atas hasil CV, tanda bahwa model tidak overfit pada data latih.</p>
+<p><strong>Kalibrasi sudah dicek</strong> (notebook 04 bagian 14.1). Pada 10 kelompok pemohon, kurva kalibrasi menempel garis diagonal dan Brier score di data uji 0,0655. Artinya angka PD bisa dibaca langsung sebagai peluang gagal bayar dan aman dipakai untuk menghitung expected loss, sehingga kalibrasi ulang (isotonic atau Platt) tidak diperlukan. Ini hasil dari keputusan tidak memakai class weight.</p>
+<p><img alt="PR curve dan ROC curve" src="https://raw.githubusercontent.com/aoramaaulia-collab/home-credit-credit-risk/main/docs/assets/fig_pr_roc.png" />
+<em>Kiri: Precision-Recall curve dengan titik batas 12% (recall 57%, precision 23%). Kanan: ROC curve. Garis putus-putus adalah tebakan acak.</em></p>
+<p>Cara membaca grafik kiri: bergerak ke kanan berarti model menangkap lebih banyak calon gagal bayar, tetapi precision turun karena makin banyak nasabah baik ikut tersaring. Titik hitam adalah batas yang akhirnya dipilih. Garis biru tua selalu berada jauh di atas garis acak.</p>
+<h3>Confusion matrix dalam bahasa sehari-hari</h3>
+<p><img alt="Confusion matrix" src="https://raw.githubusercontent.com/aoramaaulia-collab/home-credit-credit-risk/main/docs/assets/fig_cm.png" />
+<em>Confusion matrix pada batas 12% untuk 61.503 pemohon data uji.</em></p>
+<p>Pada batas 12%:</p>
+<ul>
+<li><strong>46.959 nasabah lancar disetujui dengan benar.</strong></li>
+<li><strong>2.833 calon gagal bayar berhasil tertangkap</strong> sebelum pinjaman dicairkan.</li>
+<li><strong>2.132 calon gagal bayar lolos.</strong> Inilah sumber kerugian yang tersisa.</li>
+<li><strong>9.579 nasabah baik ikut tersaring.</strong> Inilah harga yang dibayar untuk menangkap calon gagal bayar.</li>
+</ul>
+<p>Dalam angka ringkas: F2 0,439, recall 57,1%, precision 22,8%, dan 20,2% pengajuan tersaring. Kalau dibaca dengan bahasa awam: model menangkap lebih dari separuh calon gagal bayar dengan hanya menyaring sekitar seperlima pengajuan.</p>
+<p>Per produk, performa pinjaman tunai (cash loans) lebih baik, dengan PR-AUC 0,292 dan recall 58%, dibanding pinjaman revolving dengan PR-AUC 0,224 dan recall 41%.</p>
+<hr />
+<h2>Memilih threshold: kenapa bukan F2 tertinggi, dan kenapa bukan biaya minimum</h2>
+<p>Model hanya menghasilkan probabilitas. Keputusan baru muncul ketika kita menetapkan batas (threshold): pemohon dengan PD di atas batas ditandai berisiko. Saya membandingkan lima kebijakan di data uji dengan LGD 45%.</p>
+<p><img alt="Trade-off biaya per threshold" src="https://raw.githubusercontent.com/aoramaaulia-collab/home-credit-credit-risk/main/docs/assets/fig_biaya_threshold.png" />
+<em>Makin rendah threshold, expected loss (merah) turun, tetapi keuntungan yang hilang dari nasabah baik (kuning) naik tajam. Garis hitam adalah total keduanya.</em></p>
+<table>
+<thead>
+<tr>
+<th>Kebijakan</th>
+<th>Disetujui</th>
+<th>DR disetujui</th>
+<th>Expected loss</th>
+<th>Keuntungan hilang</th>
+<th>Total biaya</th>
+<th>vs tanpa model</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tanpa model</td>
+<td>100%</td>
+<td>8,07%</td>
+<td>1,24 M</td>
+<td>0</td>
+<td>1,24 M</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Aturan skor eksternal</td>
+<td>90,1%</td>
+<td>6,34%</td>
+<td>0,92 M</td>
+<td>0,30 M</td>
+<td>1,22 M</td>
+<td>hemat 1,6%</td>
+</tr>
+<tr>
+<td>F2 tertinggi (9%)</td>
+<td>72,1%</td>
+<td>3,61%</td>
+<td>0,44 M</td>
+<td>1,01 M</td>
+<td>1,45 M</td>
+<td>biaya naik 16,8%</td>
+</tr>
+<tr>
+<td><strong>Terpilih (12%)</strong></td>
+<td><strong>79,8%</strong></td>
+<td><strong>4,34%</strong></td>
+<td><strong>0,57 M</strong></td>
+<td><strong>0,67 M</strong></td>
+<td><strong>1,24 M</strong></td>
+<td><strong>impas (-0,2%)</strong></td>
+</tr>
+<tr>
+<td>Biaya minimum (22%)</td>
+<td>92,0%</td>
+<td>5,85%</td>
+<td>0,87 M</td>
+<td>0,20 M</td>
+<td>1,07 M</td>
+<td>hemat 13,7%</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Total biaya per kebijakan" src="https://raw.githubusercontent.com/aoramaaulia-collab/home-credit-credit-risk/main/docs/assets/fig_kebijakan.png" />
+<em>Total biaya per kebijakan. Merah adalah kerugian gagal bayar, kuning adalah margin yang hilang dari nasabah baik yang ditolak.</em></p>
+<p><strong>Kenapa bukan F2 tertinggi (9%)?</strong> Di titik ini model menolak 13.808 nasabah baik. Margin yang hilang dari mereka (1,01 M) lebih besar daripada kerugian yang dicegah, sehingga total biaya justru naik 16,8% dibanding tanpa model. Secara statistik terbaik, secara bisnis merugi.</p>
+<p><strong>Kenapa bukan biaya minimum (22%)?</strong> Total biayanya memang paling rendah, tetapi recall-nya hanya sekitar 32%. Sekitar dua pertiga calon gagal bayar tetap lolos, dan hasil ini sangat bergantung pada asumsi margin dan LGD yang belum pasti.</p>
+<p><strong>Yang saya pilih adalah F2 tertinggi dengan guardrail</strong>: cari F2 setinggi mungkin, dengan syarat total biaya tidak boleh lebih buruk daripada tanpa model. Hasilnya batas 12%. Pada batas ini <strong>expected loss turun 53,7%</strong>, dari 1,24 M menjadi 0,57 M, artinya 0,67 M kerugian dicegah di data uji. Bila diterapkan ke seluruh 307 ribu pemohon historis, nilainya sekitar 3,3 M. Default rate pinjaman yang disetujui turun dari 8,07% menjadi 4,34%, sementara hampir 80% pengajuan tetap disetujui.</p>
+<h3>Sensitivitas LGD</h3>
+<p>Pada LGD 45%, kebijakan 12% hanya impas secara total biaya. Namun 45% adalah batas bawah yang konservatif. Jika LGD sebenarnya 60%, penghematan bersihnya menjadi <strong>13,2%</strong>, dan pada LGD 75% sekitar <strong>21%</strong>. Jadi kebijakan ini tidak pernah lebih buruk daripada tanpa model, dan makin menguntungkan bila kerugian per gagal bayar lebih besar dari asumsi dasar.</p>
+<h3>Kebijakan tiga zona</h3>
+<p>Satu threshold memaksa keputusan hitam putih. Padahal, banyak pemohon yang tersaring sebenarnya tidak terlalu berisiko. Karena itu saya menambahkan batas kedua di 22% (titik biaya minimum) dan membentuk tiga zona.</p>
+<p><img alt="Kebijakan 3 zona" src="https://raw.githubusercontent.com/aoramaaulia-collab/home-credit-credit-risk/main/docs/assets/fig_zona.png" />
+<em>Default rate per zona di data uji. Garis putus-putus adalah rata-rata 8,1%.</em></p>
+<table>
+<thead>
+<tr>
+<th>Zona</th>
+<th>Batas PD</th>
+<th>Porsi pemohon</th>
+<th>Default rate</th>
+<th>Porsi dari seluruh gagal bayar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Approve</td>
+<td>di bawah 12%</td>
+<td>79,8%</td>
+<td>4,3%</td>
+<td>42,9%</td>
+</tr>
+<tr>
+<td>Review</td>
+<td>12% sampai di bawah 22%</td>
+<td>12,2%</td>
+<td>15,7%</td>
+<td>23,7%</td>
+</tr>
+<tr>
+<td>Reject</td>
+<td>22% ke atas</td>
+<td>8,0%</td>
+<td>33,6%</td>
+<td>33,3%</td>
+</tr>
+</tbody>
+</table>
+<p>Zona Reject hanya berisi 8% pemohon tetapi menangkap sepertiga seluruh gagal bayar; satu dari tiga pemohon di zona ini gagal bayar. Zona Review tidak ditolak, melainkan diberi perlakuan khusus: limit dikurangi, tenor diperpendek, atau diminta uang muka. Dengan begitu, perusahaan tetap mendapat margin dari mayoritas nasabah Review yang lancar, sambil menekan eksposur pada yang berisiko.</p>
+<hr />
+<h2>Interpretasi model dengan SHAP</h2>
+<p>Model yang dipakai untuk keputusan kredit harus bisa dijelaskan, baik ke tim internal, regulator, maupun nasabah. Saya memakai SHAP (Lundberg dan Lee, 2017), metode yang memecah skor setiap pemohon menjadi kontribusi masing-masing fitur.</p>
+<p><img alt="Faktor paling berpengaruh" src="https://raw.githubusercontent.com/aoramaaulia-collab/home-credit-credit-risk/main/docs/assets/fig_shap.png" />
+<em>Rata-rata nilai SHAP absolut di data uji. Makin panjang batang, makin besar pengaruh fitur terhadap skor risiko.</em></p>
+<p>Faktor teratas adalah rata-rata skor eksternal (0,247), disusul perkiraan tenor (0,120), besar cicilan (0,117), skor eksternal 2 (0,112), rasio pinjaman terhadap harga barang (0,111), skor eksternal 3 (0,099), dan lama riwayat kredit barang atau POS (0,096). Setelah itu ada skor eksternal terendah, cicilan pinjaman sebelumnya, sektor tempat kerja, dan jenis pekerjaan.</p>
+<p>Dua hal menarik. Pertama, urutan ini konsisten dengan temuan EDA, jadi model belajar pola yang masuk akal secara bisnis. Kedua, <strong>tenor berpengaruh secara tidak linear</strong>: risikonya tidak sekadar naik atau turun seiring panjang tenor. Pola seperti ini sulit ditangkap model linear, dan menjadi salah satu alasan LightGBM unggul atas Logistic Regression.</p>
+<p>Di aplikasi Streamlit, SHAP juga ditampilkan per pemohon, sehingga analis bisa melihat faktor apa saja yang menaikkan atau menurunkan risiko seseorang.</p>
+<hr />
+<h2>Keterbatasan model: apakah PR-AUC 0,288 itu jelek?</h2>
+<p>Pertanyaan ini wajar, karena 0,288 terlihat kecil dibanding angka 0,9 yang sering muncul di tutorial. Jawabannya: angka ini harus dibandingkan dengan patokannya. Tebakan acak hanya mencapai 0,081, karena hanya 8% pemohon yang gagal bayar. Model ini 3,6 kali lebih baik. ROC-AUC 0,79 juga setara dengan solusi kuat pada dataset ini, di mana solusi publik terbaik berada di sekitar 0,80. Yang lebih penting, penambahan fitur, seleksi fitur, ensemble, dan tuning yang luas hanya menggeser PR-AUC sekitar 0,002. Ini tanda bahwa model sudah mendekati batas informasi yang tersedia di data. Untuk naik lebih jauh, yang dibutuhkan adalah data baru, bukan model yang lebih rumit.</p>
+<p>Keterbatasan lain yang perlu diketahui sebelum model ini dipakai:</p>
+<ol>
+<li><strong>Precision rendah adalah konsekuensi data tidak seimbang.</strong> Dari 4 pemohon yang tersaring, 1 benar-benar gagal bayar. Namun kelompok ini 2,8 kali lebih berisiko daripada rata-rata, dan karena itu sebagian besar diarahkan ke zona Review, bukan langsung ditolak.</li>
+<li><strong>Bias seleksi.</strong> Label hanya ada untuk pemohon yang dulu disetujui. Tanpa reject inference, risiko profil yang dulu ditolak bisa diremehkan.</li>
+<li><strong>Validasi acak, bukan out-of-time.</strong> Dataset tidak punya tanggal pengajuan, sehingga ketahanan model terhadap perubahan kondisi ekonomi belum teruji.</li>
+<li><strong>Pinjaman revolving lebih lemah</strong> (PR-AUC 0,224, recall 41%) karena datanya hanya sekitar 9%.</li>
+<li><strong>Asumsi bisnis.</strong> LGD dan margin adalah proksi; nilai nominal dampak bergantung pada asumsi ini, karena itu diuji tiga skenario.</li>
+<li><strong>Reproducibility.</strong> TargetEncoder memakai cross-fitting acak; replikasi di lingkungan lain memberi ROC-AUC 0,788, bukan 0,793.</li>
+<li><strong>Keadilan.</strong> Gender sudah dikeluarkan, tetapi variabel proksi seperti usia, status keluarga, dan pekerjaan masih ada dan perlu diaudit.</li>
+<li><strong>Ketergantungan pada skor eksternal.</strong> Skor ini adalah kotak hitam dari lembaga lain dan mendominasi model. Jika sumbernya berubah, performa ikut berubah.</li>
+</ol>
+<hr />
+<h2>Rekomendasi</h2>
+<h3>Untuk bisnis</h3>
+<ol>
+<li>Terapkan tiga zona dengan batas 12% dan 22% sebagai filter awal, lalu tinjau batasnya setiap kuartal.</li>
+<li>Untuk zona Review, kurangi limit (misalnya 50%), perpendek tenor, atau minta uang muka. Cara ini menjaga margin sambil menekan risiko.</li>
+<li>Prioritaskan segmen aman: pemohon dengan skor D8-D10, PNS, dan pensiunan, misalnya lewat kerja sama payroll.</li>
+<li>Lakukan verifikasi tambahan untuk pemohon D1-D2, pemohon dengan utilisasi kartu kredit di atas 90%, atau yang memiliki 6 pinjaman aktif atau lebih.</li>
+<li>Pantau default rate per zona setiap bulan.</li>
+</ol>
+<h3>Untuk pengembangan model</h3>
+<ol>
+<li><strong>Data baru</strong> adalah cara paling efektif menaikkan PR-AUC: riwayat SLIK OJK yang lebih rinci, data alternatif (pembayaran tagihan, e-wallet, telco), dan pendapatan terverifikasi.</li>
+<li>Validasi out-of-time dan monitoring PSI/CSI bulanan, dengan retraining terjadwal saat label 12 bulan tersedia.</li>
+<li>Reject inference atau eksperimen champion-challenger kecil untuk mendapat label dari profil yang biasanya ditolak.</li>
+<li>Model atau threshold terpisah per produk (tunai dan revolving) dan per segmen.</li>
+<li>Monotonic constraints (misalnya skor eksternal naik, risiko turun) dan scorecard WOE dengan Logistic Regression sebagai challenger yang mudah diaudit regulator.</li>
+<li>Tuning Bayesian dengan Optuna, early stopping, dan 5-fold; mencoba CatBoost untuk variabel kategori.</li>
+<li>Objective berbasis profit memakai LGD dan EAD aktual dari data internal.</li>
+<li>Audit fairness (approval rate dan error per kelompok usia dan proksi lainnya) serta alasan penolakan per nasabah dari SHAP.</li>
+<li>MLOps: model registry, API scoring, dan peluncuran bertahap dengan A/B testing.</li>
+</ol>
+<hr />
+<h2>Deployment: Streamlit dan Power BI</h2>
+<p>Model yang hanya hidup di notebook sulit dipakai orang lain. Karena itu saya membuat dua antarmuka.</p>
+<p><strong>Aplikasi Streamlit</strong> memiliki lima halaman:</p>
+<ul>
+<li><strong>Beranda</strong>: profil risiko portofolio dari 307.511 pengajuan historis, dengan default rate per segmen.</li>
+<li><strong>Scoring Pemohon</strong>: cari pemohon berdasarkan ID atau isi data secara manual, lalu lihat PD, zona keputusan yang disarankan, dan faktor SHAP yang menaikkan atau menurunkan risiko.</li>
+<li><strong>Scoring Batch</strong>: unggah file CSV untuk menilai banyak pemohon sekaligus, lalu unduh hasilnya.</li>
+<li><strong>Performa &amp; Kebijakan</strong>: simulator nominal untuk mengatur batas approve dan reject, LGD, serta perlakuan zona Review, lalu melihat langsung berapa uang yang terselamatkan.</li>
+<li><strong>Tentang</strong>: ringkasan metodologi dan cara membaca hasil.</li>
+</ul>
+<p><strong>Dashboard Power BI</strong> ditujukan untuk manajemen. Halaman Ringkasan Kebijakan menampilkan KPI nominal, slicer threshold, LGD, dan potongan limit Review, kurva biaya, serta perbandingan sebelum dan sesudah model. Halaman Segmen &amp; Zona dan Profil Risiko Pemohon menampilkan default rate per segmen dengan sorotan warna dinamis: merah untuk default rate tertinggi dan hijau untuk yang terendah. Tombol navigasi memudahkan perpindahan antarhalaman.</p>
+<hr />
+<h2>Penutup</h2>
+<p>Pelajaran terbesar dari proyek ini adalah bahwa model terbaik secara statistik belum tentu kebijakan terbaik secara bisnis. Threshold dengan F2 tertinggi justru membuat total biaya naik 16,8%. Baru setelah biaya kedua jenis kesalahan diterjemahkan ke dalam uang, dan setelah keputusan dipecah menjadi tiga zona, model ini benar-benar bisa dipakai: expected loss turun 53,7%, default rate pinjaman yang disetujui turun dari 8,07% menjadi 4,34%, dan hampir 80% pemohon tetap dilayani.</p>
+<p>Pelajaran kedua adalah pentingnya jujur terhadap keterbatasan. PR-AUC 0,288 bukan angka yang "jelek", tetapi juga bukan angka yang bisa naik hanya dengan model yang lebih rumit. Langkah berikutnya yang paling berdampak adalah data yang lebih kaya dan validasi yang lebih ketat.</p>
+<p>Terima kasih kepada Home Credit Indonesia dan Rakamin Academy atas kesempatan program ini. Saya terbuka untuk diskusi dan masukan.</p>
+<p><strong>Tautan proyek:</strong></p>
+<ul>
+<li>Repository GitHub: https://github.com/aoramaaulia-collab/home-credit-credit-risk</li>
+<li>Aplikasi Streamlit: https://home-credit-credit-risk-emvn4romwxnpwuyke5nquy.streamlit.app</li>
+<li>Halaman portofolio: https://aoramaaulia-collab.github.io/home-credit-credit-risk/</li>
+</ul>
+<hr />
+<h2>Referensi</h2>
+<ol>
+<li>Home Credit Indonesia. (2023). <em>Laporan Keberlanjutan 2023</em>. Sumber angka pendapatan bunga bersih Rp1.261.790 juta.</li>
+<li>Kontan. (12 Februari 2024). Pemberitaan kinerja pembiayaan Home Credit Indonesia. Sumber volume pembiayaan Rp9,3 triliun.</li>
+<li>Basel Committee on Banking Supervision. Internal Ratings-Based (IRB) approach, foundation IRB: LGD 45% untuk eksposur senior tanpa agunan.</li>
+<li>Saito, T., &amp; Rehmsmeier, M. (2015). The Precision-Recall Plot Is More Informative than the ROC Plot When Evaluating Binary Classifiers on Imbalanced Datasets. <em>PLOS ONE</em>, 10(3).</li>
+<li>Otoritas Jasa Keuangan. (2023). <em>POJK Nomor 22 Tahun 2023 tentang Pelindungan Konsumen dan Masyarakat di Sektor Jasa Keuangan</em>.</li>
+<li>Lundberg, S. M., &amp; Lee, S.-I. (2017). A Unified Approach to Interpreting Model Predictions. <em>Advances in Neural Information Processing Systems 30</em>.</li>
+<li>Ke, G., Meng, Q., Finley, T., Wang, T., Chen, W., Ma, W., Ye, Q., &amp; Liu, T.-Y. (2017). LightGBM: A Highly Efficient Gradient Boosting Decision Tree. <em>Advances in Neural Information Processing Systems 30</em>.</li>
+</ol></body></html>

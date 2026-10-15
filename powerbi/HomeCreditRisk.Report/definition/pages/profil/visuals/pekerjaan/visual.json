@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "pekerjaan",
   "position": {
     "x": 16,
-    "y": 498,
-    "z": 2800,
-    "width": 679.80000000000007,
-    "height": 280,
-    "tabOrder": 2800
+    "y": 460,
+    "z": 21000,
+    "height": 252,
+    "width": 680.90000000000009,
+    "tabOrder": 18000
   },
   "visual": {
     "visualType": "clusteredBarChart",
@@ -29,25 +29,6 @@
               "queryRef": "Pemohon.PEKERJAAN",
               "nativeQueryRef": "PEKERJAAN",
               "active": true
-            }
-          ]
-        },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Pemohon"
-                    }
-                  },
-                  "Property": "Default Rate"
-                }
-              },
-              "queryRef": "Pemohon.Default Rate",
-              "nativeQueryRef": "Default Rate",
-              "displayName": "Default rate"
             }
           ]
         },
@@ -80,6 +61,25 @@
               },
               "queryRef": "Pemohon.Rata-rata PD",
               "nativeQueryRef": "Rata-rata PD"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Pemohon"
+                    }
+                  },
+                  "Property": "Default Rate"
+                }
+              },
+              "queryRef": "Pemohon.Default Rate",
+              "nativeQueryRef": "Default Rate",
+              "displayName": "Default rate"
             }
           ]
         }
@@ -117,7 +117,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "10D"
                 }
               }
             },
@@ -196,7 +196,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "10D"
                 }
               }
             },
@@ -241,7 +241,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "10D"
                 }
               }
             },
@@ -305,7 +305,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "11D"
+                  "Value": "12D"
                 }
               }
             },
@@ -350,7 +350,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "10D"
                 }
               }
             },

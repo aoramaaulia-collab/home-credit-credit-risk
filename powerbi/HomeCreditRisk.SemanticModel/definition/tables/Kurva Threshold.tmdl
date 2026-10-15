@@ -1,10 +1,10 @@
 table 'Kurva Threshold'
-	lineageTag: 7af93ce7-0d05-4ba0-a8aa-b0d413f5ce93
+	lineageTag: 40320d98-e27a-4edd-b8c0-03aac64641bf
 
 	column Threshold
 		dataType: double
 		formatString: 0.00
-		lineageTag: b5db45be-7b5b-47ed-802f-c90688876c9f
+		lineageTag: 47661c9d-a813-4968-97aa-ecb56b0a026b
 		summarizeBy: none
 		sourceColumn: [Value]
 

@@ -1,83 +1,83 @@
 table Pemohon
-	lineageTag: d7d48904-b055-42e0-8f92-ee7cc3ee7e77
+	lineageTag: dcdf3017-4b41-46c4-9372-3220052e2298
 
 	/// Batas approve dari slicer (default hasil NB 04)
 	measure 'Batas Approve Aktif' = SELECTEDVALUE('Batas Approve'[Batas Approve], 12) / 100
 		formatString: 0.0%
 		displayFolder: 0 Parameter
-		lineageTag: 8c0b2a68-b0b8-47d8-937e-b3c9e6b44c4b
+		lineageTag: 401290e4-ecdc-433a-b28a-8d656129f2f2
 
 	/// Batas reject dari slicer, minimal sama dengan batas approve
 	measure 'Batas Reject Aktif' = MAX(SELECTEDVALUE('Batas Reject'[Batas Reject], 22) / 100, [Batas Approve Aktif])
 		formatString: 0.0%
 		displayFolder: 0 Parameter
-		lineageTag: caef23e5-b0cc-4ff6-ae7d-0f5d188da9c7
+		lineageTag: edb4ea2d-820a-44f6-89d5-b97a82f263cf
 
 	/// Loss Given Default dari slicer (default 45%)
 	measure 'LGD Aktif' = SELECTEDVALUE('LGD'[LGD], 45) / 100
 		formatString: 0%
 		displayFolder: 0 Parameter
-		lineageTag: e8f9c9df-f69a-4a76-9efa-8a04a48105ab
+		lineageTag: d65f14c3-308e-4229-bc7d-d0f53cfb365e
 
 	/// Porsi limit yang tetap diberikan di zona Review. 0% = Review ditolak
 	measure 'Limit Review Aktif' = SELECTEDVALUE('Limit Review'[Limit Review], 0) / 100
 		formatString: 0%
 		displayFolder: 0 Parameter
-		lineageTag: 7a0a7220-e570-42aa-9076-439b9488cc7d
+		lineageTag: 6c9913aa-ec8b-425f-8431-9a797f29ac23
 
 	/// Jumlah pemohon
 	measure 'Jumlah Pemohon' = COUNTROWS(Pemohon)
 		formatString: #,0
 		displayFolder: 1 Portofolio
-		lineageTag: 9d1b624a-0e81-41a7-8195-08840c590eed
+		lineageTag: 6a761626-e13c-4ca5-9982-d114305fa81d
 
 	/// Jumlah pemohon yang gagal bayar
 	measure 'Jumlah Gagal Bayar' = SUM(Pemohon[TARGET])
 		formatString: #,0
 		displayFolder: 1 Portofolio
-		lineageTag: fb3f2dc7-33eb-4fc9-8427-5366a22860f9
+		lineageTag: b34ecaff-3fb0-4554-8d92-9a787a1f8013
 
 	/// Persentase gagal bayar
 	measure 'Default Rate' = DIVIDE([Jumlah Gagal Bayar], [Jumlah Pemohon])
 		formatString: 0.0%
 		displayFolder: 1 Portofolio
-		lineageTag: 47c70242-d9f4-47ae-9f26-9d4e9bfbbfad
+		lineageTag: 9c00ebde-8d3c-46c5-8680-237b51755849
 
 	/// Rata-rata probabilitas gagal bayar dari model
 	measure 'Rata-rata PD' = AVERAGE(Pemohon[PD])
 		formatString: 0.0%
 		displayFolder: 1 Portofolio
-		lineageTag: 05c7ef81-552a-4984-b027-fff5545fac55
+		lineageTag: 7d919be4-cf8a-4652-8e1e-643aa02a6e27
 
 	/// Total nilai pinjaman
 	measure 'Total Pinjaman' = SUM(Pemohon[AMT_CREDIT]) / 1e9
 		formatString: #,0.00" M";-#,0.00" M"
 		displayFolder: 1 Portofolio
-		lineageTag: 3e0adfb8-8dde-428d-9066-5720b806b994
+		lineageTag: 19972279-8ae4-4542-91a2-fbd293c3c6a3
 
 	/// Porsi pemohon terhadap seluruh pemohon (mengikuti slicer lain)
 	measure 'Porsi Pemohon' = DIVIDE([Jumlah Pemohon], CALCULATE([Jumlah Pemohon], ALLSELECTED(Pemohon[ZONA])))
 		formatString: 0.0%
 		displayFolder: 1 Portofolio
-		lineageTag: 5542012b-3885-423d-9692-eca0d3f96048
+		lineageTag: bf21edd7-4a9c-4180-81c0-6f212ba06b2f
 
 	/// Porsi gagal bayar segmen ini dari seluruh gagal bayar
 	measure 'Porsi Gagal Bayar' = DIVIDE([Jumlah Gagal Bayar], CALCULATE([Jumlah Gagal Bayar], ALLSELECTED(Pemohon[ZONA])))
 		formatString: 0.0%
 		displayFolder: 1 Portofolio
-		lineageTag: 8499a1dd-1767-42c8-b8da-a1419c4bc4af
+		lineageTag: 2b465f9a-b601-4716-969f-a00d731e4c6e
 
 	/// Pinjaman gagal bayar x LGD (sebelum tindakan)
 	measure 'Potensi Kerugian' = CALCULATE(SUM(Pemohon[AMT_CREDIT]), Pemohon[TARGET] = 1) * [LGD Aktif] / 1e9
 		formatString: #,0.00" M";-#,0.00" M"
 		displayFolder: 1 Portofolio
-		lineageTag: d11c62c0-172a-47f1-8bee-5fe48d302a81
+		lineageTag: be64e94e-3f2a-468f-90b7-fdcd7a759987
 
 	/// Kerugian jika semua pengajuan disetujui: pinjaman gagal bayar x LGD
 	measure 'Expected Loss Tanpa Model' = [Potensi Kerugian]
 		formatString: #,0.00" M";-#,0.00" M"
 		displayFolder: 2 Kebijakan
-		lineageTag: 0923c941-bfcb-4ef1-aae9-08318944a132
+		lineageTag: 8e147c5d-111b-4f06-9227-47f57905877a
 
 	/// Kerugian dari gagal bayar yang tetap disetujui (zona Review mengikuti porsi limit)
 	measure 'Expected Loss Dengan Model' =
@@ -92,7 +92,7 @@ table Pemohon
 			    ) / 1e9
 		formatString: #,0.00" M";-#,0.00" M"
 		displayFolder: 2 Kebijakan
-		lineageTag: 280c2871-7060-4364-9ecb-a9bbe3278c9f
+		lineageTag: ddd27b74-a5d7-48d5-8e40-4f99bb6e31b0
 
 	/// Margin yang hilang dari nasabah baik yang ditolak atau limitnya dipotong
 	measure 'Keuntungan Hilang' =
@@ -107,43 +107,43 @@ table Pemohon
 			    ) / 1e9
 		formatString: #,0.00" M";-#,0.00" M"
 		displayFolder: 2 Kebijakan
-		lineageTag: 43846f7e-bbb7-462e-8aed-55f512a455ac
+		lineageTag: 933f6800-9b69-4ac3-8cf4-415601fbd676
 
 	/// Expected loss + keuntungan hilang
 	measure 'Total Biaya Dengan Model' = [Expected Loss Dengan Model] + [Keuntungan Hilang]
 		formatString: #,0.00" M";-#,0.00" M"
 		displayFolder: 2 Kebijakan
-		lineageTag: cf27e7a5-2503-477f-a98c-e39e74096a4e
+		lineageTag: cc8c7888-e0c8-433f-8c78-e858f5822a2e
 
 	/// Selisih expected loss tanpa dan dengan model
 	measure 'Expected Loss Dicegah' = [Expected Loss Tanpa Model] - [Expected Loss Dengan Model]
 		formatString: #,0.00" M";-#,0.00" M"
 		displayFolder: 2 Kebijakan
-		lineageTag: 6c96a22e-877d-4871-8870-e2a8a70b3461
+		lineageTag: e493e60b-b817-494d-a73b-be1f8ef40b42
 
 	/// Persentase expected loss yang dicegah
 	measure 'Expected Loss Turun %' = DIVIDE([Expected Loss Dicegah], [Expected Loss Tanpa Model])
 		formatString: 0.0%
 		displayFolder: 2 Kebijakan
-		lineageTag: 00e29e8b-40df-4a87-8e22-e481728b589d
+		lineageTag: bc04dd39-b087-4ab8-918f-9cbdd4e470d2
 
 	/// Total biaya tanpa model dikurangi total biaya dengan model
 	measure 'Penghematan Bersih' = [Expected Loss Tanpa Model] - [Total Biaya Dengan Model]
 		formatString: #,0.00" M";-#,0.00" M"
 		displayFolder: 2 Kebijakan
-		lineageTag: c6cc0aef-4e20-4d4d-bdad-13d9a085bae4
+		lineageTag: 09c3aa31-f65d-4057-a8b3-472c89295e3a
 
 	/// Penghematan bersih dibanding total biaya tanpa model
 	measure 'Penghematan Bersih %' = DIVIDE([Penghematan Bersih], [Expected Loss Tanpa Model])
 		formatString: +0.0%;-0.0%;0.0%
 		displayFolder: 2 Kebijakan
-		lineageTag: d6e4e211-cf9b-4a9e-9127-027aefe3fdfa
+		lineageTag: ad9d39ea-8123-45f5-87e5-ba041efd239b
 
 	/// Penghematan bersih dibagi jumlah pemohon x 1.000
 	measure 'Penghematan per 1.000 Pemohon' = DIVIDE([Penghematan Bersih] * 1e9, [Jumlah Pemohon]) * 1000
 		formatString: #,0
 		displayFolder: 2 Kebijakan
-		lineageTag: 3ddd09af-4d14-427a-8396-977d91f59ea2
+		lineageTag: da5c46eb-d7e2-4fa2-bfad-c4bc69eebb58
 
 	/// Approve + Review (jika limit Review > 0%)
 	measure 'Pemohon Disetujui' =
@@ -155,13 +155,13 @@ table Pemohon
 			    COUNTROWS(FILTER(Pemohon, Pemohon[PD] < ta || (k > 0 && Pemohon[PD] < tr)))
 		formatString: #,0
 		displayFolder: 2 Kebijakan
-		lineageTag: 72a9cf88-bfb2-4163-ab27-d9276e95fbd7
+		lineageTag: ec65d996-f916-4d71-9e5b-05baf609dab8
 
 	/// Approval rate
 	measure 'Persen Disetujui' = DIVIDE([Pemohon Disetujui], [Jumlah Pemohon])
 		formatString: 0.0%
 		displayFolder: 2 Kebijakan
-		lineageTag: 3e64b947-79cc-4b16-80e0-929177286751
+		lineageTag: d6a0e75f-3407-40b3-86db-32d2ea2d51f5
 
 	/// Default rate di antara pinjaman yang disetujui
 	measure 'Default Rate Disetujui' =
@@ -176,7 +176,7 @@ table Pemohon
 			    )
 		formatString: 0.00%
 		displayFolder: 2 Kebijakan
-		lineageTag: 98c93350-e6b7-4a3b-a9ec-d8854bdcd24d
+		lineageTag: 4f321e6e-8f18-4f43-a9ed-8275ac1a8dc3
 
 	/// Gagal bayar dengan PD >= batas approve
 	measure 'Gagal Bayar Tertangkap' =
@@ -184,13 +184,13 @@ table Pemohon
 			RETURN COUNTROWS(FILTER(Pemohon, Pemohon[TARGET] = 1 && Pemohon[PD] >= ta))
 		formatString: #,0
 		displayFolder: 2 Kebijakan
-		lineageTag: ac2c9fa0-2592-48de-b72a-7aa1188996cb
+		lineageTag: d2b79d5e-fd84-4cee-8025-0e47a824208b
 
 	/// Persentase gagal bayar yang tertangkap model
 	measure Recall = DIVIDE([Gagal Bayar Tertangkap], [Jumlah Gagal Bayar])
 		formatString: 0.0%
 		displayFolder: 2 Kebijakan
-		lineageTag: b9d681b3-03e7-4073-8635-1f1531cf1fa6
+		lineageTag: 1a443e8a-9851-409e-8bc8-3fa846d84ff1
 
 	/// Persentase tolakan yang memang gagal bayar
 	measure Precision =
@@ -198,7 +198,7 @@ table Pemohon
 			RETURN DIVIDE([Gagal Bayar Tertangkap], COUNTROWS(FILTER(Pemohon, Pemohon[PD] >= ta)))
 		formatString: 0.0%
 		displayFolder: 2 Kebijakan
-		lineageTag: 1ca440ba-670a-4455-87b7-d26c36ced60c
+		lineageTag: f7188d33-e597-4ee0-827a-c87b12d2a832
 
 	/// F2 pada batas approve aktif (recall diberi bobot 4x precision)
 	measure 'F2 Score' =
@@ -207,19 +207,19 @@ table Pemohon
 			RETURN DIVIDE(5 * p * r, 4 * p + r)
 		formatString: 0.000
 		displayFolder: 2 Kebijakan
-		lineageTag: a28087db-30f9-4edd-891c-5aea2e59a560
+		lineageTag: 903c9e1e-a171-4924-8396-47a8dff68022
 
 	/// Expected loss per skenario
 	measure 'Expected Loss Skenario' = SWITCH(SELECTEDVALUE(Skenario[Skenario]), "Tanpa model", [Expected Loss Tanpa Model], "Dengan model", [Expected Loss Dengan Model])
 		formatString: #,0.00" M";-#,0.00" M"
 		displayFolder: 3 Grafik
-		lineageTag: 0d618fe8-64e7-47ae-bf93-1645bb7871e2
+		lineageTag: 7f1d2733-34a0-4f9e-8255-452875d2a933
 
 	/// Keuntungan hilang per skenario
 	measure 'Keuntungan Hilang Skenario' = IF(SELECTEDVALUE(Skenario[Skenario]) = "Dengan model", [Keuntungan Hilang], 0)
 		formatString: #,0.00" M";-#,0.00" M"
 		displayFolder: 3 Grafik
-		lineageTag: da31a1f5-1de6-437e-95c1-301083607559
+		lineageTag: 20039414-008b-42eb-912c-b273efe87777
 
 	/// Expected loss jika tolak semua PD >= threshold pada sumbu X
 	measure 'Expected Loss Kurva' =
@@ -228,7 +228,7 @@ table Pemohon
 			RETURN SUMX(FILTER(Pemohon, Pemohon[TARGET] = 1 && Pemohon[PD] < t), Pemohon[AMT_CREDIT]) * lgd / 1e9
 		formatString: #,0.00" M";-#,0.00" M"
 		displayFolder: 3 Grafik
-		lineageTag: 5fc6c33d-ada4-4163-bf49-428468b28190
+		lineageTag: 2779181f-38ac-49c7-a2cf-4f61348b6b0f
 
 	/// Keuntungan hilang jika tolak semua PD >= threshold pada sumbu X
 	measure 'Keuntungan Hilang Kurva' =
@@ -236,138 +236,138 @@ table Pemohon
 			RETURN SUMX(FILTER(Pemohon, Pemohon[TARGET] = 0 && Pemohon[PD] >= t), Pemohon[KEUNTUNGAN_POTENSIAL]) / 1e9
 		formatString: #,0.00" M";-#,0.00" M"
 		displayFolder: 3 Grafik
-		lineageTag: 36e4b67d-c513-41f6-9d16-2141065e0f90
+		lineageTag: 3c0bdf5d-96c7-4c3a-94ec-3548faab1b49
 
 	/// Expected loss + keuntungan hilang per threshold
 	measure 'Total Biaya Kurva' = [Expected Loss Kurva] + [Keuntungan Hilang Kurva]
 		formatString: #,0.00" M";-#,0.00" M"
 		displayFolder: 3 Grafik
-		lineageTag: 26a9d30a-149f-47a9-940f-b791872c5f55
+		lineageTag: 81875eb1-8a22-4b4b-98b7-065150538e6a
 
 	/// Garis pembanding: total biaya tanpa model
 	measure 'Total Biaya Tanpa Model' = CALCULATE([Expected Loss Tanpa Model], ALL('Kurva Threshold'))
 		formatString: #,0.00" M";-#,0.00" M"
 		displayFolder: 3 Grafik
-		lineageTag: 7ce8abaa-a94b-4070-819c-d6839f926bcd
+		lineageTag: 84df1dae-0d71-4069-843a-075f2985f552
 
 	/// Ringkasan kebijakan aktif untuk subjudul
 	measure 'Judul Dinamis' = "Batas approve " & FORMAT([Batas Approve Aktif], "0.0%") & " | batas reject " & FORMAT([Batas Reject Aktif], "0.0%") & " | LGD " & FORMAT([LGD Aktif], "0%") & " | limit di zona Review " & FORMAT([Limit Review Aktif], "0%")
 		displayFolder: 3 Grafik
-		lineageTag: 3c1a7070-efc4-4c06-8b0f-a54e743f5e73
+		lineageTag: 4d642920-9c70-43d2-9209-145741a27da1
 
 	/// Hijau jika penghematan >= 0, merah jika negatif
 	measure 'Warna Positif Hijau' = IF([Penghematan Bersih] >= 0, "#4E8F69", "#C0504A")
 		displayFolder: 4 Format
-		lineageTag: bf20665d-cf1b-465d-9df5-3787ae0b17c4
+		lineageTag: 9f02ce41-11d8-4dab-8ec8-78ad2d15fd5e
 
 	/// Hijau jika default rate disetujui di bawah default rate tanpa model
 	measure 'Warna Default Rate' = IF([Default Rate Disetujui] <= [Default Rate], "#4E8F69", "#C0504A")
 		displayFolder: 4 Format
-		lineageTag: 20bec556-393e-4d6c-9e01-d5e6871de605
+		lineageTag: c3731651-8ada-48a0-88d5-116f3c617626
 
 	/// Warna angka netral
 	measure 'Warna Netral' = "#3A4149"
 		displayFolder: 4 Format
-		lineageTag: 580473bd-fbe5-4156-b8a9-1f639fb6cf34
+		lineageTag: 19e950f8-0798-44ae-bf01-dcdf7cd26fca
 
 	/// Hijau jika ada kerugian yang dicegah
 	measure 'Warna Dicegah' = IF([Expected Loss Dicegah] > 0, "#4E8F69", "#C0504A")
 		displayFolder: 4 Format
-		lineageTag: 0dd2253b-bb3c-482b-8f28-9f3e55ce2a82
+		lineageTag: f6854fc2-a6b4-4117-8189-5ed38b707ca1
 
 	/// Teks pembanding
 	measure 'Sub EL Tanpa' = "semua disetujui | LGD " & FORMAT([LGD Aktif], "0%")
 		displayFolder: 4 Format
-		lineageTag: a4af0026-e1c0-4a33-ba8c-e6c1e477509d
+		lineageTag: 06c6cf68-8170-405b-be63-4cbb30c945e7
 
 	/// Teks pembanding
 	measure 'Sub EL Dengan' = "-" & FORMAT([Expected Loss Turun %], "0.0%") & " vs tanpa model"
 		displayFolder: 4 Format
-		lineageTag: 2f859a76-989b-45df-ae5b-2ca69419ee84
+		lineageTag: 11839de6-4077-4d49-816c-47c5c67e9861
 
 	/// Teks pembanding
 	measure 'Sub Dicegah' = FORMAT([Gagal Bayar Tertangkap], "#,0") & " gagal bayar tertangkap"
 		displayFolder: 4 Format
-		lineageTag: 141a3d36-ffad-4b2d-8bcc-ab7e99dfff89
+		lineageTag: cef8b26f-c637-43c6-8271-59212d5f90af
 
 	/// Teks pembanding
 	measure 'Sub Hilang' = "margin nasabah baik ditolak"
 		displayFolder: 4 Format
-		lineageTag: 5971523d-a46f-4a79-ae7c-9657882d97bd
+		lineageTag: 944ec40c-fe92-40bc-913f-317dca686a0f
 
 	/// Teks pembanding
 	measure 'Sub Hemat' = FORMAT([Penghematan Bersih %], "+0.0%;-0.0%") & " vs tanpa model"
 		displayFolder: 4 Format
-		lineageTag: 72475fe4-d878-4b32-bf94-1defa9ca63a6
+		lineageTag: 2d9e64dc-26de-4db0-9cc1-e04b27c6137c
 
 	/// Teks pembanding
 	measure 'Sub DR' = "sebelumnya " & FORMAT([Default Rate], "0.00%")
 		displayFolder: 4 Format
-		lineageTag: 22a3c4f8-2a5d-475f-ae55-43fd5417c026
+		lineageTag: 91cb7775-996e-4b68-b68b-011dd77d3f62
 
 	/// Teks pembanding
 	measure 'Sub F2' = "recall " & FORMAT([Recall], "0%") & " | prec " & FORMAT([Precision], "0%")
 		displayFolder: 4 Format
-		lineageTag: 740c033c-4b8e-4bee-80ef-4fbe5ef012c1
+		lineageTag: 6e6d9a5f-6e51-4b0b-a315-52d593030108
 
 	/// Merah = default rate tertinggi, hijau = terendah (ikut filter)
 	measure 'Warna Sorot Desil' =
 			VAR cur = [Default Rate]
-			VAR t = FILTER(ADDCOLUMNS(ALLSELECTED(Pemohon[DESIL_SKOR_EKSTERNAL]), "@dr", [Default Rate], "@n", [Jumlah Pemohon]), [@n] >= 100)
-			RETURN SWITCH(TRUE(), cur = MAXX(t, [@dr]), "#C8574F", cur = MINX(t, [@dr]), "#5E9E78", "#C5CCD4")
+			VAR t = FILTER(ADDCOLUMNS(ALLSELECTED(Pemohon[DESIL_SKOR_EKSTERNAL], Pemohon[DESIL_URUT]), "@dr", [Default Rate], "@n", [Jumlah Pemohon]), [@n] >= 100)
+			RETURN SWITCH(TRUE(), [Jumlah Pemohon] < 100, "#ECEEF1", cur = MAXX(t, [@dr]), "#C8574F", cur = MINX(t, [@dr]), "#5E9E78", "#B9C0C8")
 		displayFolder: 4 Format
-		lineageTag: 7aa1e430-3d0e-4fb7-9831-bdfa037fe972
+		lineageTag: 0ed396df-4e78-4fc3-9b81-a7f936e7e292
 
 	/// Teks sorotan dinamis
 	measure 'Info Sorot Desil' =
-			VAR t = FILTER(ADDCOLUMNS(ALLSELECTED(Pemohon[DESIL_SKOR_EKSTERNAL]), "@dr", [Default Rate], "@n", [Jumlah Pemohon]), [@n] >= 100)
+			VAR t = FILTER(ADDCOLUMNS(ALLSELECTED(Pemohon[DESIL_SKOR_EKSTERNAL], Pemohon[DESIL_URUT]), "@dr", [Default Rate], "@n", [Jumlah Pemohon]), [@n] >= 100)
 			VAR hi = TOPN(1, t, [@dr], DESC)
 			VAR lo = TOPN(1, t, [@dr], ASC)
 			RETURN "Merah tertinggi: " & MAXX(hi, Pemohon[DESIL_SKOR_EKSTERNAL]) & " (" & FORMAT(MAXX(hi, [@dr]), "0.0%") & ")  |  hijau terendah: " & MAXX(lo, Pemohon[DESIL_SKOR_EKSTERNAL]) & " (" & FORMAT(MAXX(lo, [@dr]), "0.0%") & ")"
 		displayFolder: 4 Format
-		lineageTag: 7952e042-0058-45bb-92d9-de7ba9504a40
+		lineageTag: f441f98c-05c1-4475-b464-ab43b806edb8
 
 	/// Merah = default rate tertinggi, hijau = terendah (ikut filter)
 	measure 'Warna Sorot Usia' =
 			VAR cur = [Default Rate]
-			VAR t = FILTER(ADDCOLUMNS(ALLSELECTED(Pemohon[KELOMPOK_USIA]), "@dr", [Default Rate], "@n", [Jumlah Pemohon]), [@n] >= 100)
-			RETURN SWITCH(TRUE(), cur = MAXX(t, [@dr]), "#C8574F", cur = MINX(t, [@dr]), "#5E9E78", "#C5CCD4")
+			VAR t = FILTER(ADDCOLUMNS(ALLSELECTED(Pemohon[KELOMPOK_USIA], Pemohon[USIA_URUT]), "@dr", [Default Rate], "@n", [Jumlah Pemohon]), [@n] >= 100)
+			RETURN SWITCH(TRUE(), [Jumlah Pemohon] < 100, "#ECEEF1", cur = MAXX(t, [@dr]), "#C8574F", cur = MINX(t, [@dr]), "#5E9E78", "#B9C0C8")
 		displayFolder: 4 Format
-		lineageTag: 7671e88d-acf7-4c49-9f8b-02b0fc186908
+		lineageTag: cad53c4f-6fab-44c1-bd5f-61ecaf45a31c
 
 	/// Teks sorotan dinamis
 	measure 'Info Sorot Usia' =
-			VAR t = FILTER(ADDCOLUMNS(ALLSELECTED(Pemohon[KELOMPOK_USIA]), "@dr", [Default Rate], "@n", [Jumlah Pemohon]), [@n] >= 100)
+			VAR t = FILTER(ADDCOLUMNS(ALLSELECTED(Pemohon[KELOMPOK_USIA], Pemohon[USIA_URUT]), "@dr", [Default Rate], "@n", [Jumlah Pemohon]), [@n] >= 100)
 			VAR hi = TOPN(1, t, [@dr], DESC)
 			VAR lo = TOPN(1, t, [@dr], ASC)
 			RETURN "Merah tertinggi: " & MAXX(hi, Pemohon[KELOMPOK_USIA]) & " (" & FORMAT(MAXX(hi, [@dr]), "0.0%") & ")  |  hijau terendah: " & MAXX(lo, Pemohon[KELOMPOK_USIA]) & " (" & FORMAT(MAXX(lo, [@dr]), "0.0%") & ")"
 		displayFolder: 4 Format
-		lineageTag: 889d8176-26a0-4813-b933-35b69d7d9bc5
+		lineageTag: 2c9d4fff-5df8-4f55-a956-fc070788646e
 
 	/// Merah = default rate tertinggi, hijau = terendah (ikut filter)
 	measure 'Warna Sorot Pendidikan' =
 			VAR cur = [Default Rate]
-			VAR t = FILTER(ADDCOLUMNS(ALLSELECTED(Pemohon[PENDIDIKAN]), "@dr", [Default Rate], "@n", [Jumlah Pemohon]), [@n] >= 100)
-			RETURN SWITCH(TRUE(), cur = MAXX(t, [@dr]), "#C8574F", cur = MINX(t, [@dr]), "#5E9E78", "#C5CCD4")
+			VAR t = FILTER(ADDCOLUMNS(ALLSELECTED(Pemohon[PENDIDIKAN], Pemohon[PENDIDIKAN_URUT]), "@dr", [Default Rate], "@n", [Jumlah Pemohon]), [@n] >= 100)
+			RETURN SWITCH(TRUE(), [Jumlah Pemohon] < 100, "#ECEEF1", cur = MAXX(t, [@dr]), "#C8574F", cur = MINX(t, [@dr]), "#5E9E78", "#B9C0C8")
 		displayFolder: 4 Format
-		lineageTag: 6d2b6313-adce-4ec8-a688-bf7a2e0c4f21
+		lineageTag: 8262ac02-299a-4926-9e1a-6e907598b757
 
 	/// Teks sorotan dinamis
 	measure 'Info Sorot Pendidikan' =
-			VAR t = FILTER(ADDCOLUMNS(ALLSELECTED(Pemohon[PENDIDIKAN]), "@dr", [Default Rate], "@n", [Jumlah Pemohon]), [@n] >= 100)
+			VAR t = FILTER(ADDCOLUMNS(ALLSELECTED(Pemohon[PENDIDIKAN], Pemohon[PENDIDIKAN_URUT]), "@dr", [Default Rate], "@n", [Jumlah Pemohon]), [@n] >= 100)
 			VAR hi = TOPN(1, t, [@dr], DESC)
 			VAR lo = TOPN(1, t, [@dr], ASC)
 			RETURN "Merah tertinggi: " & MAXX(hi, Pemohon[PENDIDIKAN]) & " (" & FORMAT(MAXX(hi, [@dr]), "0.0%") & ")  |  hijau terendah: " & MAXX(lo, Pemohon[PENDIDIKAN]) & " (" & FORMAT(MAXX(lo, [@dr]), "0.0%") & ")"
 		displayFolder: 4 Format
-		lineageTag: e4d2cd50-0262-4b9a-abcf-b411222de8e7
+		lineageTag: 4022e056-de01-411b-835e-cb9695f91ee3
 
 	/// Merah = default rate tertinggi, hijau = terendah (ikut filter)
 	measure 'Warna Sorot Wilayah' =
 			VAR cur = [Default Rate]
 			VAR t = FILTER(ADDCOLUMNS(ALLSELECTED(Pemohon[RATING_WILAYAH]), "@dr", [Default Rate], "@n", [Jumlah Pemohon]), [@n] >= 100)
-			RETURN SWITCH(TRUE(), cur = MAXX(t, [@dr]), "#C8574F", cur = MINX(t, [@dr]), "#5E9E78", "#C5CCD4")
+			RETURN SWITCH(TRUE(), [Jumlah Pemohon] < 100, "#ECEEF1", cur = MAXX(t, [@dr]), "#C8574F", cur = MINX(t, [@dr]), "#5E9E78", "#B9C0C8")
 		displayFolder: 4 Format
-		lineageTag: e3ee33b0-1c2c-42cf-84fe-9e09cf4755e6
+		lineageTag: df746c1a-ac5c-4eed-a730-45c6748ba5d3
 
 	/// Teks sorotan dinamis
 	measure 'Info Sorot Wilayah' =
@@ -376,15 +376,15 @@ table Pemohon
 			VAR lo = TOPN(1, t, [@dr], ASC)
 			RETURN "Merah tertinggi: " & MAXX(hi, Pemohon[RATING_WILAYAH]) & " (" & FORMAT(MAXX(hi, [@dr]), "0.0%") & ")  |  hijau terendah: " & MAXX(lo, Pemohon[RATING_WILAYAH]) & " (" & FORMAT(MAXX(lo, [@dr]), "0.0%") & ")"
 		displayFolder: 4 Format
-		lineageTag: 8ebca0a4-7880-409d-bea8-be661f641e99
+		lineageTag: 54b12456-b8af-408a-b2c5-4a0f14ac5ddd
 
 	/// Merah = default rate tertinggi, hijau = terendah (ikut filter)
 	measure 'Warna Sorot Pekerjaan' =
 			VAR cur = [Default Rate]
 			VAR t = FILTER(ADDCOLUMNS(ALLSELECTED(Pemohon[PEKERJAAN]), "@dr", [Default Rate], "@n", [Jumlah Pemohon]), [@n] >= 100)
-			RETURN SWITCH(TRUE(), cur = MAXX(t, [@dr]), "#C8574F", cur = MINX(t, [@dr]), "#5E9E78", "#C5CCD4")
+			RETURN SWITCH(TRUE(), [Jumlah Pemohon] < 100, "#ECEEF1", cur = MAXX(t, [@dr]), "#C8574F", cur = MINX(t, [@dr]), "#5E9E78", "#B9C0C8")
 		displayFolder: 4 Format
-		lineageTag: dba7f458-8c5e-4f71-ac32-275ab4dc8ea3
+		lineageTag: d5c2ba8a-667d-47e7-aa15-7473249373a1
 
 	/// Teks sorotan dinamis
 	measure 'Info Sorot Pekerjaan' =
@@ -393,15 +393,15 @@ table Pemohon
 			VAR lo = TOPN(1, t, [@dr], ASC)
 			RETURN "Merah tertinggi: " & MAXX(hi, Pemohon[PEKERJAAN]) & " (" & FORMAT(MAXX(hi, [@dr]), "0.0%") & ")  |  hijau terendah: " & MAXX(lo, Pemohon[PEKERJAAN]) & " (" & FORMAT(MAXX(lo, [@dr]), "0.0%") & ")"
 		displayFolder: 4 Format
-		lineageTag: 6a5a7938-af62-4a67-aab8-b95087415b7e
+		lineageTag: c6b954dd-d06a-4f21-b94d-be2fc2f64469
 
 	/// Merah = default rate tertinggi, hijau = terendah (ikut filter)
 	measure 'Warna Sorot Pendapatan' =
 			VAR cur = [Default Rate]
 			VAR t = FILTER(ADDCOLUMNS(ALLSELECTED(Pemohon[SUMBER_PENDAPATAN]), "@dr", [Default Rate], "@n", [Jumlah Pemohon]), [@n] >= 100)
-			RETURN SWITCH(TRUE(), cur = MAXX(t, [@dr]), "#C8574F", cur = MINX(t, [@dr]), "#5E9E78", "#C5CCD4")
+			RETURN SWITCH(TRUE(), [Jumlah Pemohon] < 100, "#ECEEF1", cur = MAXX(t, [@dr]), "#C8574F", cur = MINX(t, [@dr]), "#5E9E78", "#B9C0C8")
 		displayFolder: 4 Format
-		lineageTag: 340bc5a8-c5d0-4927-a103-0331ba0efb40
+		lineageTag: a7b3b5ca-ca33-4402-bc9e-803649bedc97
 
 	/// Teks sorotan dinamis
 	measure 'Info Sorot Pendapatan' =
@@ -410,166 +410,168 @@ table Pemohon
 			VAR lo = TOPN(1, t, [@dr], ASC)
 			RETURN "Merah tertinggi: " & MAXX(hi, Pemohon[SUMBER_PENDAPATAN]) & " (" & FORMAT(MAXX(hi, [@dr]), "0.0%") & ")  |  hijau terendah: " & MAXX(lo, Pemohon[SUMBER_PENDAPATAN]) & " (" & FORMAT(MAXX(lo, [@dr]), "0.0%") & ")"
 		displayFolder: 4 Format
-		lineageTag: a325ef5e-50ca-4d9d-a191-58bab870a5df
+		lineageTag: b1c8878f-2c99-4b09-9051-3807d7d983af
 
 	/// Teks pembanding dinamis
-	measure 'Banding EL Tanpa' = FORMAT([Jumlah Gagal Bayar], "#,0") & " gagal bayar x LGD " & FORMAT([LGD Aktif], "0%")
+	measure 'Banding EL Tanpa' = "dari " & FORMAT([Jumlah Gagal Bayar], "#,0") & " gagal bayar"
 		displayFolder: 5 Pembanding
-		lineageTag: 02ac09e5-1822-4245-8fc2-a7587595ad06
+		lineageTag: b2c48951-7c67-49fd-b579-d8fc25769e88
 
 	/// Warna pembanding
 	measure 'Warna Banding EL Tanpa' = "#6E7781"
 		displayFolder: 5 Pembanding
-		lineageTag: a41800e3-5db4-43ca-9f21-6cd107617737
+		lineageTag: 14e3e997-867c-4ad9-ac81-1618af493311
 
 	/// Teks pembanding dinamis
-	measure 'Banding EL Dengan' = "▼ " & FORMAT([Expected Loss Turun %], "0.0%") & " vs tanpa model"
+	measure 'Banding EL Dengan' = IF([Expected Loss Turun %] >= 0, "kerugian " & FORMAT([Expected Loss Turun %], "0.0%") & " lebih kecil", "kerugian " & FORMAT(-[Expected Loss Turun %], "0.0%") & " lebih besar")
 		displayFolder: 5 Pembanding
-		lineageTag: 0f1b1c1d-9795-43bd-984c-af94d411df29
+		lineageTag: 119a6936-8ca3-47a8-9b55-1568bde07ad3
 
 	/// Warna pembanding
 	measure 'Warna Banding EL Dengan' = IF([Expected Loss Turun %] > 0, "#4E8F69", "#C0504A")
 		displayFolder: 5 Pembanding
-		lineageTag: 8d3f3d71-8598-4f62-89ad-269bb4993484
+		lineageTag: e976c73e-30fb-475d-b3db-b1645778ebba
 
 	/// Teks pembanding dinamis
-	measure 'Banding Dicegah' = "▲ " & FORMAT([Recall], "0%") & " gagal bayar tertangkap"
+	measure 'Banding Dicegah' = FORMAT([Recall], "0%") & " gagal bayar tertangkap"
 		displayFolder: 5 Pembanding
-		lineageTag: d3633dc5-55e4-42fb-9737-e793a0d89497
+		lineageTag: 82e980d0-db5b-4b89-85a8-254c90d59fdf
 
 	/// Warna pembanding
 	measure 'Warna Banding Dicegah' = IF([Expected Loss Dicegah] > 0, "#4E8F69", "#C0504A")
 		displayFolder: 5 Pembanding
-		lineageTag: a3dbb948-da09-403e-8e59-ebd6c080702f
+		lineageTag: d2ce9e80-7ac8-4df7-a52c-917346237b1c
 
 	/// Teks pembanding dinamis
 	measure 'Banding Hilang' = FORMAT(DIVIDE([Keuntungan Hilang], [Expected Loss Tanpa Model]), "0%") & " dari kerugian awal"
 		displayFolder: 5 Pembanding
-		lineageTag: 43d557f2-c362-4f68-aa6b-ad45e2ba5dd7
+		lineageTag: 26772696-1c90-4235-ad3d-bb7d448d3864
 
 	/// Warna pembanding
 	measure 'Warna Banding Hilang' = "#B7862F"
 		displayFolder: 5 Pembanding
-		lineageTag: 2e24775b-1bde-4bf7-a897-3510d9fd4569
+		lineageTag: 294f3c86-43ae-4cfb-8555-e48e77af28bd
 
 	/// Teks pembanding dinamis
-	measure 'Banding Hemat' = IF([Penghematan Bersih] >= 0, "▲ ", "▼ ") & FORMAT(ABS([Penghematan Bersih %]), "0.0%") & " vs tanpa model"
+	measure 'Banding Hemat' = IF([Penghematan Bersih] >= 0, "lebih hemat ", "lebih mahal ") & FORMAT(ABS([Penghematan Bersih %]), "0.0%") & " dari tanpa model"
 		displayFolder: 5 Pembanding
-		lineageTag: 57755e83-69fe-42e4-aeeb-dcfe88a6e5b7
+		lineageTag: eb229de0-1f5d-4118-946c-f1b28ac657be
 
 	/// Warna pembanding
 	measure 'Warna Banding Hemat' = IF([Penghematan Bersih] >= 0, "#4E8F69", "#C0504A")
 		displayFolder: 5 Pembanding
-		lineageTag: fcdf91b9-be88-4f5d-9a18-dbecc8e4f69e
+		lineageTag: 9e736caf-bf80-48b2-af32-fe82505cf9ab
 
 	/// Teks pembanding dinamis
-	measure 'Banding DR' = "▼ " & FORMAT(([Default Rate] - [Default Rate Disetujui]) * 100, "0.0") & " poin dari " & FORMAT([Default Rate], "0.0%")
+	measure 'Banding DR' =
+			VAR d = ([Default Rate] - [Default Rate Disetujui]) * 100
+			RETURN IF(d >= 0, "lebih aman, turun ", "lebih berisiko, naik ") & FORMAT(ABS(d), "0.0") & " poin dari " & FORMAT([Default Rate], "0.0%")
 		displayFolder: 5 Pembanding
-		lineageTag: 856de54f-2a9f-47c2-9710-fff5cd7f31b1
+		lineageTag: 657dbdcd-9f62-4c0b-a41a-37dabd96a40e
 
 	/// Warna pembanding
 	measure 'Warna Banding DR' = IF([Default Rate Disetujui] <= [Default Rate], "#4E8F69", "#C0504A")
 		displayFolder: 5 Pembanding
-		lineageTag: 772e4397-8277-440e-adc0-e70005225911
+		lineageTag: 8d793317-9613-4010-8334-7cb2dddabeed
 
 	/// Teks pembanding dinamis
 	measure 'Banding F2' =
 			VAR p = [Default Rate]
 			VAR b = DIVIDE(5 * p, 4 * p + 1)
-			RETURN IF([F2 Score] >= b, "▲ +", "▼ ") & FORMAT([F2 Score] - b, "0.000") & " vs tanpa model"
+			RETURN IF([F2 Score] >= b, "lebih baik ", "lebih buruk ") & FORMAT(ABS([F2 Score] - b), "0.000") & " dari tanpa model"
 		displayFolder: 5 Pembanding
-		lineageTag: 69c7237f-f46a-462e-8e95-950039707650
+		lineageTag: c7610c26-3660-4413-84db-7d718b5ea3f0
 
 	/// Warna pembanding
 	measure 'Warna Banding F2' =
 			VAR p = [Default Rate]
 			RETURN IF([F2 Score] >= DIVIDE(5 * p, 4 * p + 1), "#4E8F69", "#C0504A")
 		displayFolder: 5 Pembanding
-		lineageTag: b21e57f6-6b01-45c2-b79f-6cd8fada794e
+		lineageTag: 6cb6bad4-bf5d-44ba-ac5e-6cef81f5fc6c
 
 	/// Teks pembanding dinamis
 	measure 'Banding Pemohon' = FORMAT(DIVIDE([Jumlah Pemohon], CALCULATE([Jumlah Pemohon], ALL(Pemohon))), "0%") & " dari seluruh pemohon"
 		displayFolder: 5 Pembanding
-		lineageTag: da10c052-4d48-43b0-af46-6791f3b76ea4
+		lineageTag: 18a93bc8-8ed0-4609-972f-f22d3a7c6156
 
 	/// Warna pembanding
 	measure 'Warna Banding Pemohon' = "#6E7781"
 		displayFolder: 5 Pembanding
-		lineageTag: 172cd037-9286-4217-bc09-3ab5da3ddc93
+		lineageTag: 20471ac8-293c-4a4d-a7f8-64195aa5a78d
 
 	/// Teks pembanding dinamis
 	measure 'Banding Default Rate' =
 			VAR d = [Default Rate] - CALCULATE([Default Rate], ALL(Pemohon))
-			RETURN IF(d > 0, "▲ +", "▼ ") & FORMAT(d * 100, "0.0") & " poin vs rata-rata"
+			RETURN IF(d > 0, "lebih berisiko ", "lebih aman ") & FORMAT(ABS(d) * 100, "0.0") & " poin dari rata-rata"
 		displayFolder: 5 Pembanding
-		lineageTag: f793e75d-c178-4f13-b02d-89f2ae43516f
+		lineageTag: a7339860-2c7a-44ea-a1f4-c7a0459234cc
 
 	/// Warna pembanding
 	measure 'Warna Banding Default Rate' = IF([Default Rate] > CALCULATE([Default Rate], ALL(Pemohon)), "#C0504A", "#4E8F69")
 		displayFolder: 5 Pembanding
-		lineageTag: ee494694-a5d8-48c3-b4e7-86b284d63be2
+		lineageTag: 37cb05e8-790b-4e43-9370-59170c623d30
 
 	/// Teks pembanding dinamis
 	measure 'Banding PD' = "selisih " & FORMAT(ABS([Rata-rata PD] - [Default Rate]) * 100, "0.0") & " poin dari aktual"
 		displayFolder: 5 Pembanding
-		lineageTag: c8b6b55e-2205-4160-ba91-869a7b8d595c
+		lineageTag: 12549660-80b1-40b0-9bc1-9d1511267199
 
 	/// Warna pembanding
 	measure 'Warna Banding PD' = IF(ABS([Rata-rata PD] - [Default Rate]) < 0.01, "#4E8F69", "#B7862F")
 		displayFolder: 5 Pembanding
-		lineageTag: 059c1dac-0349-406b-9852-7dfa8d7aed66
+		lineageTag: 4affe8cd-2cdb-48f1-9a54-3154993d141b
 
 	/// Teks pembanding dinamis
 	measure 'Banding Pinjaman' = FORMAT(DIVIDE([Total Pinjaman], CALCULATE([Total Pinjaman], ALL(Pemohon))), "0%") & " dari total pinjaman"
 		displayFolder: 5 Pembanding
-		lineageTag: 60c387fe-b1fa-4d16-a76a-63982bff50b4
+		lineageTag: ff64fe93-bd36-45c0-b81b-2b381635bd23
 
 	/// Warna pembanding
 	measure 'Warna Banding Pinjaman' = "#6E7781"
 		displayFolder: 5 Pembanding
-		lineageTag: be465377-2d0b-4269-94ff-6cff0b9f9dda
+		lineageTag: c8d27523-55da-4b98-9158-10674b93051b
 
 	/// Teks pembanding dinamis
-	measure 'Banding Potensi' = FORMAT(DIVIDE([Potensi Kerugian], CALCULATE([Potensi Kerugian], ALL(Pemohon))), "0%") & " dari total potensi kerugian"
+	measure 'Banding Potensi' = FORMAT(DIVIDE([Potensi Kerugian], CALCULATE([Potensi Kerugian], ALL(Pemohon))), "0%") & " dari total potensi"
 		displayFolder: 5 Pembanding
-		lineageTag: 716c4d97-b4bf-4626-bb0d-ec072498b5c5
+		lineageTag: 18aa7f7a-b091-4bc1-b9e6-e26bbaebd0fa
 
 	/// Warna pembanding
 	measure 'Warna Banding Potensi' = "#6E7781"
 		displayFolder: 5 Pembanding
-		lineageTag: 5ad27c80-2c17-4f78-8221-602fb1c0607a
+		lineageTag: 314a3b49-8ded-463a-8075-e7ee813cf073
 
 	/// Expected loss yang masih terjadi (untuk grafik per segmen)
 	measure 'Expected Loss Tersisa' = [Expected Loss Dengan Model]
 		formatString: #,0.00" M";-#,0.00" M"
 		displayFolder: 3 Grafik
-		lineageTag: 6b5385ea-6e79-42b4-a384-fd9809e33ca1
+		lineageTag: 2aa91310-4262-4b2b-a62d-b91bee39aea5
 
 	column SK_ID_CURR
 		dataType: int64
 		formatString: 0
-		lineageTag: 80046aa4-f028-4055-ac93-be3f320ac331
+		lineageTag: 52800622-2b09-4fe5-9a9f-2f8419f5928b
 		summarizeBy: none
 		sourceColumn: SK_ID_CURR
 
 	column TARGET
 		dataType: int64
 		formatString: 0
-		lineageTag: 8ec783bb-9fe2-41f0-8c68-b337fe8e0fc0
+		lineageTag: d608cee9-d751-4884-b487-4beffac60a9f
 		summarizeBy: sum
 		sourceColumn: TARGET
 
 	column PD
 		dataType: double
 		formatString: 0.0%
-		lineageTag: b524501c-0a4c-4b59-ab74-c54b6d71906f
+		lineageTag: b89df4a0-4d7b-44d9-9f93-0a59c3342d62
 		summarizeBy: none
 		sourceColumn: PD
 
 	column AMT_CREDIT
 		dataType: double
 		formatString: #,0
-		lineageTag: 90375066-f67a-4d20-af7d-b1d05981d5a1
+		lineageTag: c7e1c6b4-a6b0-4633-9d4e-9154505126b3
 		summarizeBy: sum
 		sourceColumn: AMT_CREDIT
 
@@ -577,14 +579,14 @@ table Pemohon
 		dataType: double
 		isHidden
 		formatString: #,0
-		lineageTag: 5bc6a701-a437-47d5-9688-5f1472d4ad99
+		lineageTag: 4dea5aa2-1338-4e9c-acfa-2f38154b8e94
 		summarizeBy: sum
 		sourceColumn: AMT_ANNUITY
 
 	column AMT_INCOME_TOTAL
 		dataType: double
 		formatString: #,0
-		lineageTag: 29a58190-778f-4854-883c-9021f62ec815
+		lineageTag: e75c8e57-be9c-4da8-aa9f-3e0cb318250d
 		summarizeBy: sum
 		sourceColumn: AMT_INCOME_TOTAL
 
@@ -592,65 +594,65 @@ table Pemohon
 		dataType: double
 		isHidden
 		formatString: 0.0
-		lineageTag: 8fc8ee82-0f49-4b1f-87f8-8078c5323959
+		lineageTag: 2bfd5692-038d-4918-9cc9-443a299ea7ff
 		summarizeBy: none
 		sourceColumn: TENOR_BULAN
 
 	column KEUNTUNGAN_POTENSIAL
 		dataType: double
 		formatString: #,0
-		lineageTag: 332b2b7c-2a9a-4d7e-8cd0-361a80962808
+		lineageTag: 2acbf1ca-eb55-4afe-9b0a-a72c12a38fce
 		summarizeBy: sum
 		sourceColumn: KEUNTUNGAN_POTENSIAL
 
 	column JENIS_KONTRAK
 		dataType: string
-		lineageTag: 4bd2f158-8119-4fa7-ad14-d376bdc327b3
+		lineageTag: 3e5c0eff-59e3-46b5-b104-e4f8bde1e63b
 		summarizeBy: none
 		sourceColumn: JENIS_KONTRAK
 
 	column DESIL_SKOR_EKSTERNAL
 		dataType: string
-		lineageTag: bb9ac823-95c5-47f5-b661-81780e77aa39
+		lineageTag: 52559899-53c2-4a30-9135-7f313e016899
 		summarizeBy: none
 		sourceColumn: DESIL_SKOR_EKSTERNAL
 		sortByColumn: DESIL_URUT
 
 	column KELOMPOK_USIA
 		dataType: string
-		lineageTag: 5445f63f-f8c4-4c18-80d0-83cbf3e0774c
+		lineageTag: aef82c2c-4376-49ca-8f8b-f2b9f0f22158
 		summarizeBy: none
 		sourceColumn: KELOMPOK_USIA
 		sortByColumn: USIA_URUT
 
 	column SUMBER_PENDAPATAN
 		dataType: string
-		lineageTag: 3477a07d-aa8e-4de2-9d31-d78bd5cbfa51
+		lineageTag: 53a1edf3-535b-4e6e-b343-5dcf521a5130
 		summarizeBy: none
 		sourceColumn: SUMBER_PENDAPATAN
 
 	column PENDIDIKAN
 		dataType: string
-		lineageTag: 8ffe68fd-c06b-4e4a-a6f4-a10058c7da78
+		lineageTag: 8db5d21f-94e6-4517-b359-6ab6b9905734
 		summarizeBy: none
 		sourceColumn: PENDIDIKAN
 		sortByColumn: PENDIDIKAN_URUT
 
 	column RATING_WILAYAH
 		dataType: string
-		lineageTag: fe22fef7-2c0f-4cde-8764-53f0b6968ab8
+		lineageTag: 41b8f378-6cfc-477c-a1ba-0519ad603a22
 		summarizeBy: none
 		sourceColumn: RATING_WILAYAH
 
 	column PEKERJAAN
 		dataType: string
-		lineageTag: a8d7ba6b-d4b2-4992-9584-a2f6c3deac31
+		lineageTag: 5e41dc53-8515-4b9f-8ce1-40ef67445c1c
 		summarizeBy: none
 		sourceColumn: PEKERJAAN
 
 	column ZONA
 		dataType: string
-		lineageTag: 0daaad9a-68bc-46cd-a66d-7a2d0fa6c0c3
+		lineageTag: cc406217-7796-42b6-aa0b-9e566d91aac2
 		summarizeBy: none
 		sourceColumn: ZONA
 		sortByColumn: ZONA_URUT
@@ -659,7 +661,7 @@ table Pemohon
 		dataType: int64
 		isHidden
 		formatString: 0
-		lineageTag: dbd8fe96-f713-4eed-a948-5631cba7f589
+		lineageTag: 387ed175-f230-4dfb-a453-4aba24ab845e
 		summarizeBy: none
 		sourceColumn: ZONA_URUT
 
@@ -667,7 +669,7 @@ table Pemohon
 		dataType: int64
 		isHidden
 		formatString: 0
-		lineageTag: 1ccfd0d6-92a0-451c-89a9-dedd9951da9d
+		lineageTag: 577f8197-118b-4ecd-8e21-56dc0c33e24d
 		summarizeBy: none
 		sourceColumn: DESIL_URUT
 
@@ -675,7 +677,7 @@ table Pemohon
 		dataType: int64
 		isHidden
 		formatString: 0
-		lineageTag: dccd91f0-ab96-432f-abc6-49ac6051c8ca
+		lineageTag: a20ad7f9-1706-43a7-9054-489698ac3c6d
 		summarizeBy: none
 		sourceColumn: USIA_URUT
 
@@ -683,13 +685,13 @@ table Pemohon
 		dataType: int64
 		isHidden
 		formatString: 0
-		lineageTag: ec3d060b-088e-498b-b66d-34b0ddb3e905
+		lineageTag: 3480f46e-54e2-4d36-88e2-fbd3032cf4ff
 		summarizeBy: none
 		sourceColumn: PENDIDIKAN_URUT
 
 	column STATUS
 		dataType: string
-		lineageTag: e0221a26-1091-4b0c-9c3a-a699940b5db5
+		lineageTag: e4468326-98a1-4771-b8e7-942908c09676
 		summarizeBy: none
 		sourceColumn: STATUS
 

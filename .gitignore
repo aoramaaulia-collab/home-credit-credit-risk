@@ -3,7 +3,7 @@ gcp-key.json
 *.key.json
 
 # Data besar (dibuat ulang lewat NB 02)
-data/
+/data/
 home-credit-default-risk/
 
 # Power BI: cache & pengaturan lokal

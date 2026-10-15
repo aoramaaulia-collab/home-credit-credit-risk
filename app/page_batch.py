@@ -6,9 +6,17 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from app.common import (ZONE_COLORS, decide, fmt_num, fmt_pct, kpi, load_applicants, load_model, model_placeholder, predict, style_fig)
+from app.explain import explain_box, guide
 
 st.title('Scoring Batch (CSV)')
-st.caption('Skor banyak pemohon sekaligus. Format kolom sama dengan data mart (`mart_v2_test`).')
+st.markdown('Halaman ini menghitung risiko **banyak pemohon sekaligus**, misalnya seluruh pengajuan yang masuk hari ini, '
+            'lalu membaginya ke zona Setujui, Tinjau ulang, dan Tolak beserta perkiraan kerugiannya.')
+guide('Cara memakai', '''<ol>
+<li>Unduh <b>template CSV</b> untuk melihat format kolom (sama dengan data mart pemohon). Satu baris = satu pemohon.</li>
+<li>Isi file dengan data pemohon lalu unggah. Kolom yang tidak ada di file dianggap kosong dan ditangani otomatis oleh model.</li>
+<li>Tanpa file, centang <b>contoh 1.000 pemohon</b> untuk mencoba.</li>
+<li>Unduh hasilnya: setiap pemohon mendapat probabilitas gagal bayar, zona keputusan, dan perkiraan kerugian.</li>
+</ol>''')
 
 model, meta = load_model()
 apps = load_applicants()
@@ -59,6 +67,12 @@ if df is not None:
     style_fig(fig2, 'Expected loss per zona', 'Total perkiraan kerugian (PD × pinjaman × LGD) di setiap zona')
     fig2.update_yaxes(title='Expected loss (juta)')
     b.plotly_chart(fig2, width='stretch')
+    explain_box(
+        apa='Kiri: sebaran probabilitas gagal bayar semua pemohon dalam file. Kanan: total perkiraan kerugian (probabilitas x pinjaman x LGD) di setiap zona.',
+        cara='Di grafik kiri, setiap batang adalah jumlah pemohon pada rentang risiko tertentu; garis putus-putus adalah batas zona. '
+             'Makin banyak batang di sebelah kiri garis pertama, makin sehat kumpulan pemohon itu. Di grafik kanan, makin tinggi batang merah, makin besar kerugian yang dihindari bila zona Tolak tidak disetujui.',
+        temuan='Sebagian besar pemohon biasanya berada di zona Setujui, tetapi perkiraan kerugian terkonsentrasi di zona Tinjau ulang dan Tolak walaupun jumlah orangnya sedikit.',
+        aksi='Gunakan tabel di bawah (diurutkan dari paling berisiko) untuk menentukan pemohon mana yang perlu ditinjau analis lebih dulu.')
 
     st.dataframe(out.sort_values('probabilitas_gagal_bayar', ascending=False).style.format(
         {'probabilitas_gagal_bayar': '{:.2%}', 'jumlah_pinjaman': '{:,.0f}', 'expected_loss': '{:,.0f}'}), width='stretch', height=360)

@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "cara_baca",
   "position": {
     "x": 16,
-    "y": 790,
-    "z": 3600,
+    "y": 552,
+    "z": 29000,
+    "height": 160,
     "width": 1248,
-    "height": 250,
-    "tabOrder": 3600
+    "tabOrder": 26000
   },
   "visual": {
     "visualType": "textbox",
@@ -22,7 +22,7 @@
                     "value": "Temuan utama",
                     "textStyle": {
                       "fontFamily": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif",
-                      "fontSize": "11pt",
+                      "fontSize": "12pt",
                       "color": "#C62F36"
                     }
                   }
@@ -34,15 +34,15 @@
                     "value": "1. Kerugian turun lebih dari separuh. ",
                     "textStyle": {
                       "fontFamily": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif",
-                      "fontSize": "9pt",
+                      "fontSize": "11pt",
                       "color": "#3A4149"
                     }
                   },
                   {
-                    "value": "Batas 12%: expected loss 1,24 M menjadi 0,59 M (-53%); default rate disetujui 8,07% menjadi 4,4%; 80% pengajuan tetap disetujui.",
+                    "value": "Pada batas 12%, expected loss turun dari 1,24 M menjadi sekitar 0,59 M (-53%) dan default rate pinjaman yang disetujui turun dari 8,07% ke 4,4%, sementara 80% pengajuan tetap disetujui.",
                     "textStyle": {
                       "fontFamily": "'Segoe UI', wf_segoe-ui_normal, helvetica, arial, sans-serif",
-                      "fontSize": "9pt",
+                      "fontSize": "11pt",
                       "color": "#3A4149"
                     }
                   }
@@ -51,18 +51,18 @@
               {
                 "textRuns": [
                   {
-                    "value": "2. Menolak terlalu banyak itu mahal. ",
+                    "value": "2. Menolak terlalu banyak justru mahal. ",
                     "textStyle": {
                       "fontFamily": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif",
-                      "fontSize": "9pt",
+                      "fontSize": "11pt",
                       "color": "#3A4149"
                     }
                   },
                   {
-                    "value": "Di LGD 45% hasil bersih impas karena margin nasabah baik ikut hilang. Di LGD 60-75% (kredit tanpa agunan) hemat bersih 13-21%.",
+                    "value": "Di LGD 45% hasil bersih kira-kira impas karena margin dari nasabah baik ikut hilang. Pada LGD 60-75%, yang lebih realistis untuk kredit tanpa agunan, hemat bersih menjadi 13-21%.",
                     "textStyle": {
                       "fontFamily": "'Segoe UI', wf_segoe-ui_normal, helvetica, arial, sans-serif",
-                      "fontSize": "9pt",
+                      "fontSize": "11pt",
                       "color": "#3A4149"
                     }
                   }
@@ -71,58 +71,18 @@
               {
                 "textRuns": [
                   {
-                    "value": "3. Zona Review = tuas profit. ",
+                    "value": "3. Zona Review adalah tuas profit. ",
                     "textStyle": {
                       "fontFamily": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif",
-                      "fontSize": "9pt",
+                      "fontSize": "11pt",
                       "color": "#3A4149"
                     }
                   },
                   {
-                    "value": "Set \"Limit zona Review\" 50%: 12% pemohon berisiko menengah tetap dilayani dengan limit kecil, hemat bersih naik.",
+                    "value": "Ubah \"Limit di zona Review\" ke 50%: pemohon berisiko menengah tetap dilayani dengan limit lebih kecil, sehingga hemat bersih naik tanpa mengorbankan banyak kerugian yang dicegah.",
                     "textStyle": {
                       "fontFamily": "'Segoe UI', wf_segoe-ui_normal, helvetica, arial, sans-serif",
-                      "fontSize": "9pt",
-                      "color": "#3A4149"
-                    }
-                  }
-                ]
-              },
-              {
-                "textRuns": [
-                  {
-                    "value": "4. Skor eksternal pembeda terkuat. ",
-                    "textStyle": {
-                      "fontFamily": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif",
-                      "fontSize": "9pt",
-                      "color": "#3A4149"
-                    }
-                  },
-                  {
-                    "value": "D1-D2 (20% pemohon) menyumbang 46% gagal bayar. Aksi: verifikasi tambahan dan uang muka untuk D1-D2.",
-                    "textStyle": {
-                      "fontFamily": "'Segoe UI', wf_segoe-ui_normal, helvetica, arial, sans-serif",
-                      "fontSize": "9pt",
-                      "color": "#3A4149"
-                    }
-                  }
-                ]
-              },
-              {
-                "textRuns": [
-                  {
-                    "value": "5. Karyawan = kerugian terbesar. ",
-                    "textStyle": {
-                      "fontFamily": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif",
-                      "fontSize": "9pt",
-                      "color": "#3A4149"
-                    }
-                  },
-                  {
-                    "value": "Sekitar 60% potensi kerugian; PNS dan pensiunan paling aman (5-6%), prioritaskan lewat kerja sama payroll.",
-                    "textStyle": {
-                      "fontFamily": "'Segoe UI', wf_segoe-ui_normal, helvetica, arial, sans-serif",
-                      "fontSize": "9pt",
+                      "fontSize": "11pt",
                       "color": "#3A4149"
                     }
                   }
@@ -149,7 +109,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#FFFFFF'"
+                      "Value": "'#F7F8FA'"
                     }
                   }
                 }

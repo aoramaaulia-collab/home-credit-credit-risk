@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "kpi_5_cmp",
   "position": {
-    "x": 916,
-    "y": 158.64,
-    "z": 2800,
-    "width": 168,
-    "height": 35.36,
-    "tabOrder": 2800
+    "x": 913.89671518785917,
+    "y": 215.43811454128212,
+    "z": 24000,
+    "height": 54.888691602874424,
+    "width": 170.15494396891071,
+    "tabOrder": 21000
   },
   "visual": {
     "visualType": "card",

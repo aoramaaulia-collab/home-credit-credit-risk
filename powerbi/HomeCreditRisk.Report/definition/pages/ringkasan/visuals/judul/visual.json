@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "judul",
   "position": {
     "x": 16,
-    "y": 14,
-    "z": 1200,
-    "width": 640,
-    "height": 64,
-    "tabOrder": 1200
+    "y": 8,
+    "z": 4000,
+    "height": 60,
+    "width": 760,
+    "tabOrder": 1000
   },
   "visual": {
     "visualType": "textbox",
@@ -22,7 +22,7 @@
                     "value": "Home Credit",
                     "textStyle": {
                       "fontFamily": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif",
-                      "fontSize": "20pt",
+                      "fontSize": "18pt",
                       "color": "#C62F36"
                     }
                   },
@@ -30,7 +30,7 @@
                     "value": "  |  Dampak Model Risiko Kredit",
                     "textStyle": {
                       "fontFamily": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif",
-                      "fontSize": "20pt",
+                      "fontSize": "18pt",
                       "color": "#3A4149"
                     }
                   }
@@ -39,10 +39,10 @@
               {
                 "textRuns": [
                   {
-                    "value": "Data test 61.503 pemohon | nilai uang dalam miliar (M)",
+                    "value": "Data uji 61.503 pemohon, nilai uang dalam miliar (M). Warna: hijau = lebih baik bagi perusahaan, merah = lebih buruk, hitam = netral.",
                     "textStyle": {
                       "fontFamily": "'Segoe UI', wf_segoe-ui_normal, helvetica, arial, sans-serif",
-                      "fontSize": "9pt",
+                      "fontSize": "10pt",
                       "color": "#6E7781"
                     }
                   }

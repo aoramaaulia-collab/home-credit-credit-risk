@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "sl_limit",
   "position": {
-    "x": 1121,
-    "y": 16,
-    "z": 1600,
-    "width": 143,
-    "height": 60,
-    "tabOrder": 1600
+    "x": 646,
+    "y": 74,
+    "z": 11000,
+    "height": 66,
+    "width": 200,
+    "tabOrder": 8000
   },
   "visual": {
     "visualType": "slicer",
@@ -74,7 +74,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Limit zona Review'"
+                  "Value": "'Limit di zona Review'"
                 }
               }
             },
@@ -138,7 +138,7 @@
                 "Version": 2,
                 "From": [
                   {
-                    "Name": "t",
+                    "Name": "l",
                     "Entity": "Limit Review",
                     "Type": 0
                   }
@@ -152,7 +152,7 @@
                             "Column": {
                               "Expression": {
                                 "SourceRef": {
-                                  "Source": "t"
+                                  "Source": "l"
                                 }
                               },
                               "Property": "Limit Review"

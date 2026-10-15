@@ -1,10 +1,10 @@
 table 'Batas Reject'
-	lineageTag: 14535be1-5dc4-4311-b156-5445fadf92fb
+	lineageTag: e782322a-c7de-49e5-b197-f24aff19d4fd
 
 	column 'Batas Reject'
 		dataType: int64
 		formatString: 0"%"
-		lineageTag: d84e7e7e-4a1b-408a-b32b-72157216f830
+		lineageTag: 9b2b8d72-63f9-4dc3-847b-705756fbf7e7
 		summarizeBy: none
 		sourceColumn: [Value]
 

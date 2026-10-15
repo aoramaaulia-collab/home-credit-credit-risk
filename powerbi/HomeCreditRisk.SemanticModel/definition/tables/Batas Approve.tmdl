@@ -1,10 +1,10 @@
 table 'Batas Approve'
-	lineageTag: d853a403-3aad-456a-9780-81c3ca5ecd62
+	lineageTag: 4c2bb048-1121-4da4-a87c-80c2c174a3aa
 
 	column 'Batas Approve'
 		dataType: int64
 		formatString: 0"%"
-		lineageTag: 491becf2-a851-4b20-8849-7ceaa471ad21
+		lineageTag: d428cf71-ddb7-456d-a98f-8a15eac8a2ed
 		summarizeBy: none
 		sourceColumn: [Value]
 

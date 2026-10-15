@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "header_bar",
   "position": {
     "x": 0,
     "y": 0,
-    "z": 1100,
+    "z": 3000,
+    "height": 5,
     "width": 1280,
-    "height": 6,
-    "tabOrder": 1100
+    "tabOrder": 0
   },
   "visual": {
     "visualType": "textbox",

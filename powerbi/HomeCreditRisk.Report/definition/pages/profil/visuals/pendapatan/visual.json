@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "pendapatan",
   "position": {
-    "x": 707.80000000000007,
-    "y": 498,
-    "z": 2900,
-    "width": 556.2,
-    "height": 280,
-    "tabOrder": 2900
+    "x": 706.90000000000009,
+    "y": 460,
+    "z": 22000,
+    "height": 252,
+    "width": 557.1,
+    "tabOrder": 19000
   },
   "visual": {
     "visualType": "clusteredBarChart",
@@ -100,7 +100,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "10D"
                 }
               }
             },
@@ -122,6 +122,32 @@
                 }
               }
             }
+          }
+        },
+        {
+          "properties": {
+            "labelPosition": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Auto'"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Pemohon.Rata-rata PD"
           }
         }
       ],
@@ -152,7 +178,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "10D"
                 }
               }
             }
@@ -193,7 +219,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "10D"
                 }
               }
             },
@@ -238,7 +264,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "10D"
                 }
               }
             },
@@ -264,7 +290,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#6B7A89'"
+                      "Value": "'#B9C0C8'"
                     }
                   }
                 }
@@ -281,8 +307,9 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "Literal": {
-                      "Value": "'#DDAE5B'"
+                    "ThemeDataColor": {
+                      "ColorId": 8,
+                      "Percent": 0.2
                     }
                   }
                 }
@@ -309,7 +336,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "11D"
+                  "Value": "12D"
                 }
               }
             },
@@ -354,7 +381,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "10D"
                 }
               }
             },
@@ -379,7 +406,25 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Batang berdekatan = prediksi akurat'"
+                  "Value": "'Abu = default rate aktual, biru tua = prediksi model. Makin berdekatan, makin akurat'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 2,
+                      "Percent": 0.6
+                    }
+                  }
                 }
               }
             }
@@ -388,5 +433,51 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "eef8bc6b80e0e03ab48f",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Pemohon"
+              }
+            },
+            "Property": "DESIL_SKOR_EKSTERNAL"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "d0fd1921c84a3eef0725",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Pemohon"
+              }
+            },
+            "Property": "Default Rate"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "a4131a2db71bd70aa9a6",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Pemohon"
+              }
+            },
+            "Property": "Rata-rata PD"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }
