@@ -15,9 +15,10 @@ Proyek akhir **Home Credit Indonesia x Rakamin Academy, Data Scientist Project B
 |---|---|
 | Aplikasi Streamlit (live) | https://home-credit-credit-risk-emvn4romwxnpwuyke5nquy.streamlit.app |
 | Halaman portofolio | https://aoramaaulia-collab.github.io/home-credit-credit-risk/ |
-| Artikel Medium | (diisi setelah terbit) |
+| Artikel Medium | [Baca artikel lengkap di Medium](https://medium.com/@aoramaaulia/credit-risk-scoring-home-credit-dari-prediksi-gagal-bayar-ke-kebijakan-kredit-yang-terukur-dalam-849afd47178b) |
 | Presentasi (10 slide) | [HomeCredit_CreditRiskScoring.pptx](HomeCredit_CreditRiskScoring.pptx) |
-| Dashboard Power BI | [powerbi/HomeCreditRisk.pbip](powerbi/HomeCreditRisk.pbip) |
+| Dashboard Power BI (online) | [Buka dashboard interaktif](https://app.powerbi.com/view?r=eyJrIjoiODhkNWI1NzktNjVjNC00NWUxLWI0NjItZTcyM2MwYzgwNjNkIiwidCI6IjllMmViN2RhLTgyZDItNDc0Zi1iZTY2LTJlOTJiNmMwYjliYyIsImMiOjEwfQ%3D%3D) |
+| File Power BI | [powerbi/HomeCreditRisk.pbip](powerbi/HomeCreditRisk.pbip) |
 
 ## Daftar isi
 
@@ -412,6 +413,8 @@ Catatan: skor di simulator berasal dari model yang dilatih ulang di data latih s
 
 ## Dashboard Power BI
 
+**Lihat dashboard interaktif secara online (bisa dibuka di browser apa pun, tanpa login): [Dashboard Power BI](https://app.powerbi.com/view?r=eyJrIjoiODhkNWI1NzktNjVjNC00NWUxLWI0NjItZTcyM2MwYzgwNjNkIiwidCI6IjllMmViN2RhLTgyZDItNDc0Zi1iZTY2LTJlOTJiNmMwYjliYyIsImMiOjEwfQ%3D%3D)**
+
 Dashboard dibuat dalam format **PBIP** (Power BI Project) sehingga definisi laporan dan model semantik tersimpan sebagai file teks yang bisa dilacak di Git.
 
 | Halaman | Isi |
@@ -432,10 +435,6 @@ Dashboard dibuat dalam format **PBIP** (Power BI Project) sehingga definisi lapo
 1. Buka `powerbi/HomeCreditRisk.pbip` di Power BI Desktop.
 2. Jika lokasi folder berbeda dari komputer pembuat, buka **Transform data > Manage parameters**, lalu ubah parameter `DataFolder` menjadi path lengkap folder `powerbi/data` di komputer Anda.
 3. Klik **Close & Apply**, lalu **Refresh**.
-
-| Ringkasan Kebijakan | Segmen & Zona | Profil Risiko Pemohon |
-|---|---|---|
-| ![Ringkasan Kebijakan](docs/dashboard_ringkasan.png) | ![Segmen & Zona](docs/dashboard_segmen.png) | ![Profil Risiko Pemohon](docs/dashboard_profil.png) |
 
 ---
 
@@ -539,4 +538,4 @@ File kredensial `gcp-key.json` **tidak disertakan** di repo (sudah masuk `.gitig
 Data Scientist Project Based Virtual Internship, Home Credit Indonesia x Rakamin Academy
 
 - GitHub: [aoramaaulia-collab](https://github.com/aoramaaulia-collab)
-- Medium: [@aoramaaulia](https://medium.com/@aoramaaulia)
+- Medium: [@aoramaaulia](https://medium.com/@aoramaaulia), [artikel proyek ini](https://medium.com/@aoramaaulia/credit-risk-scoring-home-credit-dari-prediksi-gagal-bayar-ke-kebijakan-kredit-yang-terukur-dalam-849afd47178b)
