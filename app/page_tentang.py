@@ -43,4 +43,6 @@ Penjelasan lengkap 36 istilah (PD, LGD, batas approve, batas reject, recall, F2,
 ### Tautan
 - Kode dan notebook: [GitHub](https://github.com/aoramaaulia-collab/home-credit-credit-risk)
 - Ringkasan proyek: [Portfolio](https://aoramaaulia-collab.github.io/home-credit-credit-risk/)
+- Dashboard Power BI: [buka online](https://app.powerbi.com/view?r=eyJrIjoiODhkNWI1NzktNjVjNC00NWUxLWI0NjItZTcyM2MwYzgwNjNkIiwidCI6IjllMmViN2RhLTgyZDItNDc0Zi1iZTY2LTJlOTJiNmMwYjliYyIsImMiOjEwfQ%3D%3D)
+- Artikel lengkap: [Medium](https://medium.com/@aoramaaulia/credit-risk-scoring-home-credit-dari-prediksi-gagal-bayar-ke-kebijakan-kredit-yang-terukur-dalam-849afd47178b)
 """)

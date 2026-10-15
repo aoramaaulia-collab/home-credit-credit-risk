@@ -64,7 +64,8 @@
     <div class="btns">
       <a class="btn btn-primary" href="https://home-credit-credit-risk-emvn4romwxnpwuyke5nquy.streamlit.app" target="_blank" rel="noopener">Coba aplikasi Streamlit</a>
       <a class="btn btn-ghost" href="https://github.com/aoramaaulia-collab/home-credit-credit-risk" target="_blank" rel="noopener">Lihat repo GitHub</a>
-      <a class="btn btn-muted" href="#" aria-disabled="true" title="Artikel Medium segera terbit">Baca di Medium (segera)</a>
+      <a class="btn btn-muted" href="https://medium.com/@aoramaaulia/credit-risk-scoring-home-credit-dari-prediksi-gagal-bayar-ke-kebijakan-kredit-yang-terukur-dalam-849afd47178b" target="_blank" rel="noopener">Baca di Medium</a>
+      <a class="btn btn-muted" href="https://app.powerbi.com/view?r=eyJrIjoiODhkNWI1NzktNjVjNC00NWUxLWI0NjItZTcyM2MwYzgwNjNkIiwidCI6IjllMmViN2RhLTgyZDItNDc0Zi1iZTY2LTJlOTJiNmMwYjliYyIsImMiOjEwfQ%3D%3D" target="_blank" rel="noopener">Dashboard Power BI</a>
     </div>
     <div class="kpis">
       <div class="kpi good">
@@ -119,14 +120,14 @@
         <h3 class="mt" style="margin-top:12px">Gagal bayar lolos disetujui</h3>
         <p>Pemohon yang sebenarnya akan gagal bayar justru disetujui. Perusahaan kehilangan sebagian pokok pinjaman yang tidak kembali.</p>
         <div class="cost-formula">biaya = pinjaman x LGD</div>
-        <p>LGD (Loss Given Default) adalah porsi pinjaman yang hilang saat gagal bayar. Nilai ini tidak dipublikasikan, sehingga diuji pada 45% (batas bawah konservatif, acuan Basel foundation IRB untuk eksposur senior tanpa agunan), 60%, dan 75%.</p>
+        <p>LGD (Loss Given Default) adalah porsi pinjaman yang hilang saat gagal bayar. Nilai ini tidak dipublikasikan, sehingga diuji pada <strong>45%</strong> (batas bawah konservatif, acuan Basel foundation IRB untuk eksposur senior tanpa agunan), <strong>60%</strong>, dan <strong>75%</strong>.</p>
       </div>
       <div class="card warn cost-box">
         <span class="badge amber">False Positive</span>
         <h3 style="margin-top:12px">Nasabah baik ikut ditolak</h3>
         <p>Pemohon yang sebenarnya akan membayar lancar justru ditolak. Uang tidak hilang, tetapi keuntungan bunga yang seharusnya didapat ikut hilang.</p>
         <div class="cost-formula">biaya = pinjaman / 2 x margin 13,6% x tenor (tahun)</div>
-        <p>Margin bunga bersih 13,6% berasal dari pendapatan bunga bersih Rp1.261.790 juta dibagi volume pembiayaan Rp9,3 triliun (Laporan Keberlanjutan Home Credit Indonesia 2023; Kontan, 12 Februari 2024). Pinjaman dibagi dua karena saldo pokok rata-rata menurun selama cicilan berjalan.</p>
+        <p>Margin bunga bersih <strong>13,6%</strong> berasal dari pendapatan bunga bersih Rp1.261.790 juta dibagi volume pembiayaan Rp9,3 triliun (Laporan Keberlanjutan Home Credit Indonesia 2023; Kontan, 12 Februari 2024). Pinjaman dibagi dua karena saldo pokok rata-rata menurun selama cicilan berjalan.</p>
       </div>
     </div>
     <div class="callout mt">
@@ -148,13 +149,13 @@
         <span class="card-kicker">Metrik utama 1</span>
         <h3>F2-score</h3>
         <p>F-score menggabungkan dua hal: <strong>recall</strong> (dari semua yang benar-benar gagal bayar, berapa persen yang tertangkap) dan <strong>precision</strong> (dari semua yang disaring model, berapa persen yang benar-benar gagal bayar).</p>
-        <p>Versi F2 memberi bobot recall 4 kali precision. Alasannya sederhana: kesalahan meloloskan gagal bayar jauh lebih mahal, jadi model yang lebih banyak menangkap gagal bayar harus mendapat nilai lebih tinggi.</p>
+        <p>Versi F2 memberi bobot recall <strong>4 kali</strong> precision. Alasannya sederhana: kesalahan meloloskan gagal bayar jauh lebih mahal, jadi model yang lebih banyak menangkap gagal bayar harus mendapat nilai lebih tinggi.</p>
       </div>
       <div class="card soft">
         <span class="card-kicker">Metrik utama 2</span>
         <h3>PR curve dan PR-AUC</h3>
-        <p>Data sangat tidak seimbang: 92 berbanding 8. Pada kondisi ini, akurasi menyesatkan, karena model yang menyetujui semua orang pun sudah 92% "akurat".</p>
-        <p>Kurva Precision-Recall fokus pada kelompok kecil yang penting, yaitu yang gagal bayar. Patokannya jelas: tebakan acak hanya mendapat PR-AUC 0,081 (sama dengan proporsi gagal bayar), sehingga setiap kenaikan di atas angka itu adalah nilai tambah nyata.</p>
+        <p>Data sangat tidak seimbang: 92 berbanding 8. Pada kondisi ini, akurasi menyesatkan, karena model yang menyetujui semua orang pun sudah <strong>92%</strong> "akurat".</p>
+        <p>Kurva Precision-Recall fokus pada kelompok kecil yang penting, yaitu yang gagal bayar. Patokannya jelas: tebakan acak hanya mendapat PR-AUC <strong>0,081</strong> (sama dengan proporsi gagal bayar), sehingga setiap kenaikan di atas angka itu adalah nilai tambah nyata.</p>
       </div>
     </div>
     <div class="callout neutral mt">
@@ -209,9 +210,9 @@
         <figcaption><strong>Insight 1: skor eksternal adalah pembeda terkuat.</strong> Default rate per desil skor eksternal. D1 dan D2 (merah) jauh di atas rata-rata, D10 (hijau) paling aman.</figcaption>
       </figure>
       <div class="read-guide">
-        <div class="rg"><h4>Apa yang ditampilkan</h4><p>Pemohon diurutkan menurut skor dari lembaga eksternal, lalu dibagi menjadi 10 kelompok sama besar (desil). D1 adalah 10% pemohon dengan skor terendah.</p></div>
-        <div class="rg"><h4>Cara membaca</h4><p>Tinggi batang adalah persentase pemohon di kelompok itu yang gagal bayar. Garis putus-putus adalah rata-rata seluruh pemohon, 8,1%.</p></div>
-        <div class="rg find"><h4>Temuan</h4><p>Risiko turun teratur dari 22,9% (D1) ke 2,0% (D10). 20% pemohon berskor terendah (D1 dan D2) menyumbang 46% seluruh gagal bayar. Information Value-nya tertinggi di antara semua variabel (0,61).</p></div>
+        <div class="rg"><h4>Apa yang ditampilkan</h4><p>Pemohon diurutkan menurut skor dari lembaga eksternal, lalu dibagi menjadi 10 kelompok sama besar (desil). D1 adalah <strong>10%</strong> pemohon dengan skor terendah.</p></div>
+        <div class="rg"><h4>Cara membaca</h4><p>Tinggi batang adalah persentase pemohon di kelompok itu yang gagal bayar. Garis putus-putus adalah rata-rata seluruh pemohon, <strong>8,1%</strong>.</p></div>
+        <div class="rg find"><h4>Temuan</h4><p>Risiko turun teratur dari <strong>22,9%</strong> (D1) ke <strong>2,0%</strong> (D10). <strong>20%</strong> pemohon berskor terendah (D1 dan D2) menyumbang <strong>46%</strong> seluruh gagal bayar. Information Value-nya tertinggi di antara semua variabel (0,61).</p></div>
         <div class="rg act"><h4>Aksi</h4><p>Verifikasi tambahan dan uang muka untuk D1 dan D2; jalur persetujuan cepat untuk D8 sampai D10.</p></div>
       </div>
     </div>
@@ -224,7 +225,7 @@
       <div class="read-guide">
         <div class="rg"><h4>Apa yang ditampilkan</h4><p>Default rate menurut dua ukuran beban utang: seberapa penuh limit kartu kredit dipakai, dan berapa banyak pinjaman aktif yang dimiliki di lembaga lain.</p></div>
         <div class="rg"><h4>Cara membaca</h4><p>Bandingkan batang paling kiri dan paling kanan di tiap panel. Kenaikan yang konsisten dari kiri ke kanan menunjukkan pola yang kuat, bukan kebetulan.</p></div>
-        <div class="rg find"><h4>Temuan</h4><p>Utilisasi di atas 90% berisiko 19,3% (3,6 kali pemohon dengan utilisasi 0%). Pemohon dengan 6 atau lebih pinjaman aktif berisiko 13,4% (2,4 kali yang tanpa pinjaman aktif). Pemohon yang lebih dari 15% cicilannya telat dalam 12 bulan terakhir berisiko 13,0%, dibanding 6,7% bagi yang tidak pernah telat.</p></div>
+        <div class="rg find"><h4>Temuan</h4><p>Utilisasi di atas <strong>90%</strong> berisiko <strong>19,3%</strong> (<strong>3,6 kali</strong> pemohon dengan utilisasi <strong>0%</strong>). Pemohon dengan 6 atau lebih pinjaman aktif berisiko <strong>13,4%</strong> (<strong>2,4 kali</strong> yang tanpa pinjaman aktif). Pemohon yang lebih dari <strong>15%</strong> cicilannya telat dalam 12 bulan terakhir berisiko <strong>13,0%</strong>, dibanding <strong>6,7%</strong> bagi yang tidak pernah telat.</p></div>
         <div class="rg act"><h4>Aksi</h4><p>Sesuaikan limit atau tenor di zona Review, bukan langsung menolak. Pemohon ini masih bisa menjadi nasabah yang menguntungkan dengan eksposur yang lebih kecil.</p></div>
       </div>
     </div>
@@ -233,13 +234,13 @@
       <h3>Temuan lain dari EDA</h3>
       <div class="grid-2" style="gap:8px 32px">
         <ul>
-          <li>Usia di bawah 25 tahun berisiko 12,6%, sedangkan usia 60 tahun ke atas hanya 4,7%.</li>
-          <li>Lulusan sarjana berisiko 5,4%, sedangkan lulusan SMP 11,4%.</li>
-          <li>Wilayah dengan rating 3 berisiko 2,3 kali wilayah dengan rating 1.</li>
+          <li>Usia di bawah 25 tahun berisiko <strong>12,6%</strong>, sedangkan usia 60 tahun ke atas hanya <strong>4,7%</strong>.</li>
+          <li>Lulusan sarjana berisiko <strong>5,4%</strong>, sedangkan lulusan SMP <strong>11,4%</strong>.</li>
+          <li>Wilayah dengan rating 3 berisiko <strong>2,3 kali</strong> wilayah dengan rating 1.</li>
         </ul>
         <ul>
-          <li>Pekerjaan low-skill laborers 16%, security staff 13%, dan drivers 12%; PNS dan pensiunan hanya 5 sampai 6%.</li>
-          <li>Pinjaman tunai lebih berisiko daripada pinjaman revolving (8,3% berbanding 5,6%).</li>
+          <li>Pekerjaan low-skill laborers <strong>16%</strong>, security staff <strong>13%</strong>, dan drivers <strong>12%</strong>; PNS dan pensiunan hanya 5 sampai <strong>6%</strong>.</li>
+          <li>Pinjaman tunai lebih berisiko daripada pinjaman revolving (<strong>8,3%</strong> berbanding <strong>5,6%</strong>).</li>
         </ul>
       </div>
     </div>
@@ -347,7 +348,7 @@
       <div class="stack">
         <div class="card soft">
           <h3>Mengapa LightGBM</h3>
-          <p>LightGBM (0,280) dan XGBoost (0,279) hampir sama, dan keduanya jelas di atas Logistic Regression (0,261), Random Forest (0,252), serta aturan sederhana berbasis skor eksternal (0,188). Ensemble juga mencapai 0,280, tetapi tidak diadopsi karena tambahannya terlalu kecil dibanding kerumitannya.</p>
+          <p>LightGBM (<strong>0,280</strong>) dan XGBoost (<strong>0,279</strong>) hampir sama, dan keduanya jelas di atas Logistic Regression (<strong>0,261</strong>), Random Forest (<strong>0,252</strong>), serta aturan sederhana berbasis skor eksternal (<strong>0,188</strong>). Ensemble juga mencapai <strong>0,280</strong>, tetapi tidak diadopsi karena tambahannya terlalu kecil dibanding kerumitannya.</p>
         </div>
         <div class="card soft">
           <h3>Parameter LightGBM terbaik</h3>
@@ -361,7 +362,7 @@
       <div class="card">
         <span class="badge grey">Tidak dipakai</span>
         <h4 style="margin-top:10px">Class weight</h4>
-        <p>Diuji pada semua model. PR-AUC tidak naik, sedangkan Brier score menjadi 2,5 sampai 3 kali lebih buruk. Artinya probabilitas yang dihasilkan jadi tidak realistis, padahal probabilitas itu dipakai untuk menghitung expected loss.</p>
+        <p>Diuji pada semua model. PR-AUC tidak naik, sedangkan Brier score menjadi 2,5 sampai <strong>3 kali</strong> lebih buruk. Artinya probabilitas yang dihasilkan jadi tidak realistis, padahal probabilitas itu dipakai untuk menghitung expected loss.</p>
       </div>
       <div class="card">
         <span class="badge green">Dipakai</span>
@@ -371,12 +372,12 @@
       <div class="card">
         <span class="badge grey">Tidak dipakai</span>
         <h4 style="margin-top:10px">Seleksi fitur dan fitur tambahan</h4>
-        <p>SelectFromModel yang bersarang di dalam CV: top 100 fitur menurunkan PR-AUC 0,002, top 60 menurunkan 0,006. Lima fitur tambahan hanya menaikkan 0,001, di bawah batas adopsi 0,002.</p>
+        <p>SelectFromModel yang bersarang di dalam CV: top 100 fitur menurunkan PR-AUC <strong>0,002</strong>, top 60 menurunkan <strong>0,006</strong>. Lima fitur tambahan hanya menaikkan <strong>0,001</strong>, di bawah batas adopsi <strong>0,002</strong>.</p>
       </div>
       <div class="card">
         <span class="badge green">Prinsip keadilan</span>
         <h4 style="margin-top:10px">Gender tetap dikeluarkan</h4>
-        <p>Menambahkan gender hanya menaikkan PR-AUC 0,002. Keuntungan sekecil itu tidak sebanding dengan risiko diskriminasi, sehingga variabel ini tetap tidak dipakai.</p>
+        <p>Menambahkan gender hanya menaikkan PR-AUC <strong>0,002</strong>. Keuntungan sekecil itu tidak sebanding dengan risiko diskriminasi, sehingga variabel ini tetap tidak dipakai.</p>
       </div>
     </div>
   </div>
@@ -388,7 +389,7 @@
     <div class="section-head">
       <span class="section-num">08 / Evaluasi</span>
       <h2>Performa di data uji yang belum pernah dilihat model</h2>
-      <p>Data uji berisi 20% data, yaitu 61.503 pemohon. Hasilnya konsisten dengan validasi silang (PR-AUC 0,288 di data uji berbanding 0,280 saat CV).</p>
+      <p>Data uji berisi <strong>20%</strong> data, yaitu 61.503 pemohon. Hasilnya konsisten dengan validasi silang (PR-AUC <strong>0,288</strong> di data uji berbanding <strong>0,280</strong> saat CV).</p>
     </div>
     <div class="metric-strip">
       <div class="metric"><b>0,288</b><span>PR-AUC (3,6x acak)</span></div>
@@ -407,7 +408,7 @@
       <div class="read-guide">
         <div class="rg"><h4>Cara membaca kurva kiri</h4><p>Sumbu bawah: berapa persen gagal bayar yang tertangkap. Sumbu kiri: dari yang disaring, berapa persen yang memang gagal bayar. Makin jauh kurva merah di atas garis putus-putus (tebakan acak), makin baik.</p></div>
         <div class="rg"><h4>Cara membaca kurva kanan</h4><p>Sumbu bawah adalah persentase nasabah lancar yang ikut tersaring. Kurva yang melengkung tinggi ke kiri atas berarti model menangkap banyak gagal bayar sambil mengorbankan sedikit nasabah lancar.</p></div>
-        <div class="rg find"><h4>Temuan</h4><p>Pada batas 12%: F2 0,439, recall 57,1%, precision 22,8%, dan 20,2% pengajuan tersaring.</p></div>
+        <div class="rg find"><h4>Temuan</h4><p>Pada batas <strong>12%</strong>: F2 <strong>0,439</strong>, recall <strong>57,1%</strong>, precision <strong>22,8%</strong>, dan <strong>20,2%</strong> pengajuan tersaring.</p></div>
       </div>
     </div>
 
@@ -419,7 +420,7 @@
       <div class="read-guide">
         <div class="rg"><h4>Cara membaca</h4><p>Kotak kiri atas dan kanan bawah adalah keputusan yang benar. Dua kotak merah muda adalah kesalahan: kanan atas nasabah baik yang ikut tersaring, kiri bawah gagal bayar yang lolos.</p></div>
         <div class="rg find"><h4>Temuan</h4><p>Dari 4.965 gagal bayar di data uji, 2.833 tertangkap dan 2.132 lolos. Sebanyak 9.579 nasabah baik ikut tersaring; inilah alasan sebagian besar dari mereka diarahkan ke zona Review, bukan langsung ditolak.</p></div>
-        <div class="rg"><h4>Per produk</h4><p>Cash loans: PR-AUC 0,292, recall 58%. Revolving loans: PR-AUC 0,224, recall 41%.</p></div>
+        <div class="rg"><h4>Per produk</h4><p>Cash loans: PR-AUC <strong>0,292</strong>, recall <strong>58%</strong>. Revolving loans: PR-AUC <strong>0,224</strong>, recall <strong>41%</strong>.</p></div>
       </div>
     </div>
 
@@ -430,7 +431,7 @@
       </figure>
       <div class="read-guide">
         <div class="rg"><h4>Apa itu SHAP</h4><p>SHAP mengukur seberapa besar setiap fitur menggeser skor risiko seorang pemohon. Batang yang lebih panjang berarti fitur itu lebih sering dan lebih kuat mengubah keputusan.</p></div>
-        <div class="rg find"><h4>Temuan</h4><p>Rata-rata skor eksternal mendominasi (0,247), sekitar dua kali fitur berikutnya. Berikutnya adalah perkiraan tenor (0,120), besar cicilan (0,117), skor eksternal 2 (0,112), dan rasio pinjaman terhadap harga barang (0,111). Pengaruh tenor tidak linear.</p></div>
+        <div class="rg find"><h4>Temuan</h4><p>Rata-rata skor eksternal mendominasi (<strong>0,247</strong>), sekitar dua kali fitur berikutnya. Berikutnya adalah perkiraan tenor (<strong>0,120</strong>), besar cicilan (<strong>0,117</strong>), skor eksternal 2 (<strong>0,112</strong>), dan rasio pinjaman terhadap harga barang (<strong>0,111</strong>). Pengaruh tenor tidak linear.</p></div>
         <div class="rg act"><h4>Makna bisnis</h4><p>Selain skor eksternal, struktur pinjaman (tenor, cicilan, pinjaman dibanding harga barang) sangat menentukan. Ini bisa diatur oleh perusahaan, sehingga zona Review dapat memakai penyesuaian limit dan tenor.</p></div>
       </div>
     </div>
@@ -443,7 +444,7 @@
     <div class="section-head">
       <span class="section-num">09 / Threshold dan dampak bisnis</span>
       <h2>Memilih batas yang menguntungkan, bukan sekadar akurat</h2>
-      <p>Semua angka di bagian ini dihitung di data uji dengan LGD 45%, dalam miliar (M) unit mata uang dataset.</p>
+      <p>Semua angka di bagian ini dihitung di data uji dengan LGD <strong>45%</strong>, dalam miliar (M) unit mata uang dataset.</p>
     </div>
 
     <div class="sim" id="simulator">
@@ -484,8 +485,8 @@
       </figure>
       <div class="read-guide">
         <div class="rg"><h4>Cara membaca</h4><p>Bergerak ke kiri berarti lebih ketat. Garis merah (kerugian gagal bayar) turun, tetapi garis amber (margin dari nasabah baik yang ditolak) naik tajam. Garis hitam adalah jumlah keduanya.</p></div>
-        <div class="rg find"><h4>Temuan</h4><p>Di batas 12%, total biaya tepat menyentuh garis tanpa model. Lebih ketat dari itu, total biaya justru lebih mahal. Titik terendah total biaya ada di sekitar 22%.</p></div>
-        <div class="rg act"><h4>Keputusan</h4><p>12% menjadi batas Approve (F2 tertinggi yang lolos guardrail biaya), dan 22% menjadi batas Reject. Di antaranya adalah zona Review.</p></div>
+        <div class="rg find"><h4>Temuan</h4><p>Di batas <strong>12%</strong>, total biaya tepat menyentuh garis tanpa model. Lebih ketat dari itu, total biaya justru lebih mahal. Titik terendah total biaya ada di sekitar <strong>22%</strong>.</p></div>
+        <div class="rg act"><h4>Keputusan</h4><p><strong>12%</strong> menjadi batas Approve (F2 tertinggi yang lolos guardrail biaya), dan <strong>22%</strong> menjadi batas Reject. Di antaranya adalah zona Review.</p></div>
       </div>
     </div>
 
@@ -496,8 +497,8 @@
       </figure>
       <div class="read-guide">
         <div class="rg"><h4>Cara membaca</h4><p>Tinggi total batang adalah biaya keseluruhan. Komposisi warna menunjukkan dari mana biaya itu berasal.</p></div>
-        <div class="rg find"><h4>Temuan</h4><p>Kebijakan F2 tertinggi (9%) menolak 13.808 nasabah baik, sehingga margin yang hilang lebih besar daripada kerugian yang dicegah. Kebijakan biaya minimum (22%) paling hemat, tetapi hanya menangkap sekitar 32% gagal bayar.</p></div>
-        <div class="rg act"><h4>Mengapa 12%</h4><p>Batas 12% memindahkan biaya dari kerugian gagal bayar ke margin yang hilang tanpa menambah total biaya, sehingga portofolio yang disetujui jauh lebih sehat.</p></div>
+        <div class="rg find"><h4>Temuan</h4><p>Kebijakan F2 tertinggi (<strong>9%</strong>) menolak 13.808 nasabah baik, sehingga margin yang hilang lebih besar daripada kerugian yang dicegah. Kebijakan biaya minimum (<strong>22%</strong>) paling hemat, tetapi hanya menangkap sekitar <strong>32%</strong> gagal bayar.</p></div>
+        <div class="rg act"><h4>Mengapa 12%</h4><p>Batas <strong>12%</strong> memindahkan biaya dari kerugian gagal bayar ke margin yang hilang tanpa menambah total biaya, sehingga portofolio yang disetujui jauh lebih sehat.</p></div>
       </div>
     </div>
 
@@ -516,7 +517,7 @@
         </tbody>
       </table>
     </div>
-    <p class="table-note">Data uji 61.503 pemohon, LGD 45%. DR = default rate. M = miliar unit mata uang dataset.</p>
+    <p class="table-note">Data uji 61.503 pemohon, LGD <strong>45%</strong>. DR = default rate. M = miliar unit mata uang dataset.</p>
 
     <h3 class="mt-lg">Kebijakan tiga zona</h3>
     <div class="zones">
@@ -543,11 +544,11 @@
 
     <h3 class="mt-lg">Sensitivitas terhadap asumsi LGD</h3>
     <div class="grid-3">
-      <div class="card soft"><span class="card-kicker">LGD 45% (dasar)</span><div class="kpi-num" style="font-size:2rem">impas</div><p style="margin:6px 0 0;color:#6B7280">Total biaya -0,2%, expected loss -53,7%.</p></div>
+      <div class="card soft"><span class="card-kicker">LGD 45% (dasar)</span><div class="kpi-num" style="font-size:2rem">impas</div><p style="margin:6px 0 0;color:#6B7280">Total biaya -<strong>0,2%</strong>, expected loss -<strong>53,7%</strong>.</p></div>
       <div class="card soft"><span class="card-kicker">LGD 60%</span><div class="kpi-num" style="font-size:2rem;color:#3E8E63">hemat 13,2%</div><p style="margin:6px 0 0;color:#6B7280">Hemat bersih batas terpilih.</p></div>
       <div class="card soft"><span class="card-kicker">LGD 75%</span><div class="kpi-num" style="font-size:2rem;color:#3E8E63">hemat sekitar 21%</div><p style="margin:6px 0 0;color:#6B7280">Hemat bersih batas terpilih.</p></div>
     </div>
-    <p class="table-note">LGD 45% adalah asumsi paling konservatif. Makin besar LGD yang sebenarnya, makin besar penghematan bersih dari batas 12%.</p>
+    <p class="table-note">LGD <strong>45%</strong> adalah asumsi paling konservatif. Makin besar LGD yang sebenarnya, makin besar penghematan bersih dari batas <strong>12%</strong>.</p>
   </div>
 </section>
 
@@ -585,10 +586,10 @@
         <span class="card-kicker">Rekomendasi bisnis</span>
         <h3>Bisa dijalankan sekarang</h3>
         <ol>
-          <li>Terapkan kebijakan 3 zona dengan batas 12% dan 22% sebagai filter awal, lalu tinjau batasnya setiap kuartal.</li>
-          <li>Di zona Review, kurangi limit (misalnya 50%), perpendek tenor, atau minta uang muka. Cara ini menjaga margin sambil menekan risiko.</li>
+          <li>Terapkan kebijakan 3 zona dengan batas <strong>12%</strong> dan <strong>22%</strong> sebagai filter awal, lalu tinjau batasnya setiap kuartal.</li>
+          <li>Di zona Review, kurangi limit (misalnya <strong>50%</strong>), perpendek tenor, atau minta uang muka. Cara ini menjaga margin sambil menekan risiko.</li>
           <li>Prioritaskan segmen aman: skor D8 sampai D10, PNS, dan pensiunan (melalui kerja sama payroll).</li>
-          <li>Lakukan verifikasi tambahan untuk D1 dan D2, serta pemohon dengan utilisasi kartu kredit di atas 90% atau 6 pinjaman aktif lebih.</li>
+          <li>Lakukan verifikasi tambahan untuk D1 dan D2, serta pemohon dengan utilisasi kartu kredit di atas <strong>90%</strong> atau 6 pinjaman aktif lebih.</li>
           <li>Pantau default rate per zona setiap bulan.</li>
         </ol>
       </div>
@@ -651,11 +652,7 @@
       <img src="assets/app_shap.png" alt="Penjelasan faktor risiko per pemohon dengan SHAP" loading="lazy">
       <figcaption><strong>Alasan di balik skor.</strong> Merah ke kanan = faktor yang menaikkan risiko, hijau ke kiri = faktor yang menurunkan risiko, lengkap dengan nilai pemohon dibanding nilai tipikal.</figcaption>
     </figure>
-    <figure class="figure mt">
-      <img src="dashboard_ringkasan.png" alt="Tangkapan layar halaman Ringkasan Kebijakan pada dashboard Power BI" loading="lazy" onerror="this.parentNode.classList.add('is-missing')">
-      <div class="fig-missing">Tangkapan layar dashboard Power BI akan ditampilkan di sini.</div>
-      <figcaption><strong>Dashboard Power BI, halaman Ringkasan Kebijakan.</strong> KPI nominal, slicer threshold dan LGD, kurva biaya, serta perbandingan sebelum dan sesudah kebijakan.</figcaption>
-    </figure>
+    <p class="mt"><strong>Dashboard Power BI interaktif:</strong> tiga halaman (Ringkasan Kebijakan, Segmen &amp; Zona, Profil Pemohon) dengan slicer batas keputusan, LGD, dan limit zona Review. <a href="https://app.powerbi.com/view?r=eyJrIjoiODhkNWI1NzktNjVjNC00NWUxLWI0NjItZTcyM2MwYzgwNjNkIiwidCI6IjllMmViN2RhLTgyZDItNDc0Zi1iZTY2LTJlOTJiNmMwYjliYyIsImMiOjEwfQ%3D%3D" target="_blank" rel="noopener"><strong>Buka dashboard online</strong></a>.</p>
     <div class="card soft mt">
       <h3>Deliverable lain</h3>
       <p>Empat notebook (01_business_understanding, 02_etl, 03_eda, 04_modeling), presentasi 10 slide, artikel Medium, dan halaman portfolio ini.</p>
@@ -692,12 +689,13 @@
         <ul>
           <li><a href="https://github.com/aoramaaulia-collab/home-credit-credit-risk" target="_blank" rel="noopener">Repo GitHub</a></li>
           <li><a href="https://home-credit-credit-risk-emvn4romwxnpwuyke5nquy.streamlit.app" target="_blank" rel="noopener">Aplikasi Streamlit</a></li>
-          <li><a href="#" aria-disabled="true">Artikel Medium (segera terbit)</a></li>
+          <li><a href="https://medium.com/@aoramaaulia/credit-risk-scoring-home-credit-dari-prediksi-gagal-bayar-ke-kebijakan-kredit-yang-terukur-dalam-849afd47178b" target="_blank" rel="noopener">Artikel Medium</a></li>
+          <li><a href="https://app.powerbi.com/view?r=eyJrIjoiODhkNWI1NzktNjVjNC00NWUxLWI0NjItZTcyM2MwYzgwNjNkIiwidCI6IjllMmViN2RhLTgyZDItNDc0Zi1iZTY2LTJlOTJiNmMwYjliYyIsImMiOjEwfQ%3D%3D" target="_blank" rel="noopener">Dashboard Power BI (online)</a></li>
           <li><a href="https://github.com/aoramaaulia-collab" target="_blank" rel="noopener">GitHub aoramaaulia-collab</a></li>
         </ul>
       </div>
     </div>
-    <p class="small">Semua nilai uang dalam unit mata uang dataset (dataset tidak menyebut negara atau mata uang). M = miliar. Angka dampak dihitung di data uji dengan LGD 45% kecuali disebutkan lain.</p>
+    <p class="small">Semua nilai uang dalam unit mata uang dataset (dataset tidak menyebut negara atau mata uang). M = miliar. Angka dampak dihitung di data uji dengan LGD <strong>45%</strong> kecuali disebutkan lain.</p>
   </div>
 </footer>
 
