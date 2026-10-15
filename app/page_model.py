@@ -3,6 +3,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+from app.glossary import glossary_expander
+
 from app.common import (BLUE, GREEN, INK, MUTED, NAVY, ORANGE, RED, ZONE_COLORS, fmt_num, fmt_pct, kpi, load_artifacts, load_model,
                         load_test_scores, model_placeholder, money, policy_eval, readable, style_fig, threshold_curve_nominal)
 from app.explain import explain_box, guide, label
@@ -12,18 +14,7 @@ st.markdown('Halaman ini menjawab tiga pertanyaan: **seberapa baik model membeda
             'dan **di mana batas keputusan sebaiknya dipasang**. Semua angka dihitung di data uji: 20% pemohon (61.503 orang) yang tidak pernah '
             'dipakai saat melatih atau memilih model, sehingga mencerminkan performa pada pemohon baru. Nilai uang dalam unit mata uang dataset '
             '(M = miliar, jt = juta).')
-with st.expander('Kamus istilah (baca ini dulu jika belum familiar)'):
-    st.markdown('''
-- **PD (probabilitas gagal bayar):** peluang seorang pemohon kesulitan membayar cicilan, dihitung oleh model (0% sampai 100%).
-- **Recall:** dari semua pemohon yang benar-benar gagal bayar, berapa persen yang berhasil ditandai model. Makin tinggi, makin sedikit gagal bayar yang lolos.
-- **Precision:** dari semua pemohon yang ditandai berisiko, berapa persen yang benar-benar gagal bayar.
-- **F2-score:** gabungan recall dan precision, dengan recall diberi bobot 4 kali lebih penting karena meloloskan gagal bayar jauh lebih mahal daripada menolak nasabah baik.
-- **PR-AUC:** luas di bawah kurva precision-recall. Tebakan acak bernilai sama dengan proporsi gagal bayar (0,081); makin tinggi makin baik.
-- **ROC-AUC / Gini:** kemampuan model mengurutkan pemohon dari paling aman ke paling berisiko (0,5 = acak, 1 = sempurna). Gini = 2 x ROC-AUC - 1.
-- **Expected loss:** perkiraan uang yang hilang dari pinjaman gagal bayar yang disetujui = pinjaman x LGD.
-- **LGD (loss given default):** bagian pinjaman yang tidak kembali saat nasabah gagal bayar. Diasumsikan 45% (bisa diubah di simulator).
-- **Keuntungan hilang:** margin bunga yang tidak didapat karena nasabah baik ikut ditolak atau limitnya dipotong.
-''')
+glossary_expander(['Istilah risiko kredit', 'Istilah keputusan kredit', 'Istilah evaluasi model'], key='kx_model')
 
 art = load_artifacts(); ts = load_test_scores(); model, meta = load_model()
 if art is None:

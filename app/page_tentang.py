@@ -31,18 +31,7 @@ guide('Tiga zona keputusan', """<ul>
 </ul>""")
 st.markdown("""
 ### Kamus istilah
-| Istilah | Arti sederhana |
-|---|---|
-| Probabilitas gagal bayar (PD) | Peluang pemohon kesulitan membayar cicilan, dari 0% sampai 100% |
-| Default rate | Persentase pemohon dalam suatu kelompok yang benar-benar gagal bayar |
-| Expected loss | Perkiraan uang yang hilang = pinjaman gagal bayar x LGD |
-| LGD | Bagian pinjaman yang tidak kembali saat gagal bayar (diasumsikan 45%) |
-| Recall | Persentase gagal bayar yang berhasil ditandai model |
-| Precision | Persentase pemohon yang ditandai berisiko yang memang gagal bayar |
-| F2-score | Gabungan recall dan precision, recall diberi bobot 4 kali |
-| PR-AUC | Ukuran kualitas model pada data tidak seimbang; tebakan acak = 0,081 |
-| SHAP | Metode untuk membagi skor akhir menjadi sumbangan setiap faktor |
-| Skor eksternal | Skor kelayakan kredit dari lembaga lain (0 sampai 1) |
+Penjelasan lengkap 36 istilah (PD, LGD, batas approve, batas reject, recall, F2, SHAP, dan lainnya) ada di halaman **Kamus Istilah** pada menu kiri.
 
 ### Prinsip dan batasan
 - **Keadilan:** gender tidak dipakai sebagai faktor penilaian (POJK 22/2023).

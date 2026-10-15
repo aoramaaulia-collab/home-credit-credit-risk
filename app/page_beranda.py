@@ -1,6 +1,8 @@
 import plotly.graph_objects as go
 import streamlit as st
 
+from app.glossary import glossary_expander
+
 from app.common import (BLUE, NAVY, RED, fmt_num, fmt_pct, kpi, load_artifacts, load_overview, load_segments, money, style_fig)
 from app.explain import explain_box, guide
 
@@ -18,7 +20,8 @@ guide('Isi aplikasi', """
 <li><b>Scoring Pemohon</b>: hitung risiko satu pemohon dan lihat alasannya.</li>
 <li><b>Scoring Batch</b>: hitung risiko banyak pemohon sekaligus dari file CSV.</li>
 <li><b>Performa & Kebijakan</b>: seberapa akurat model, simulasi batas keputusan, dan dampaknya dalam uang.</li>
-<li><b>Tentang</b>: alur proyek, cara kerja keputusan, dan kamus istilah.</li>
+<li><b>Kamus Istilah</b>: arti semua istilah seperti PD, LGD, batas approve, dan batas reject.</li>
+<li><b>Tentang</b>: alur proyek dan cara kerja keputusan.</li>
 </ul>""")
 
 c = st.columns(5)
@@ -34,6 +37,7 @@ if art:
 st.caption('Default rate = persentase pemohon yang mengalami kesulitan membayar. Expected loss = perkiraan uang yang hilang dari pinjaman gagal bayar, '
            'dengan asumsi 45% pinjaman tidak kembali (LGD). Nilai uang dalam unit mata uang dataset, M = miliar.')
 
+glossary_expander(['Istilah risiko kredit'], key='kx__beranda')
 st.subheader('Siapa yang paling berisiko?')
 st.markdown('Pilih tab untuk melihat default rate per kelompok. Setiap grafik dilengkapi penjelasan cara membaca, temuan, dan arti bisnisnya.')
 

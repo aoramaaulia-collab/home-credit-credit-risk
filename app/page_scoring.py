@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
+from app.glossary import glossary_expander
+
 from app.common import (ZONE_COLORS, decide, fmt_num, fmt_pct, kpi, load_applicants, load_model, load_overview, load_test_scores,
                         model_placeholder, predict)
 from app.explain import explain_applicant, explain_box, guide, raw_typical_row, risk_meter, shap_chart
@@ -19,6 +21,7 @@ guide('Cara memakai halaman ini', """
 sehingga hasilnya tetap masuk akal. Arahkan kursor ke ikon tanda tanya untuk penjelasan setiap kolom.</li>
 <li><b>Baca hasilnya dari atas ke bawah:</b> saran keputusan, posisi risiko dibanding pemohon lain, lalu faktor-faktor yang menaikkan atau menurunkan risiko.</li>
 </ol>""")
+glossary_expander(['Istilah risiko kredit', 'Istilah keputusan kredit'], key='kx__scoring')
 
 model, meta = load_model()
 apps, ov, ts = load_applicants(), load_overview(), load_test_scores()

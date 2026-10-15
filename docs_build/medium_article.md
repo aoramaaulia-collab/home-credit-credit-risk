@@ -29,6 +29,60 @@ Saya akan menjelaskan setiap langkah beserta alasannya, termasuk eksperimen yang
 
 ---
 
+## Kamus istilah
+
+Sebelum masuk ke detail, berikut penjelasan singkat istilah yang sering muncul di artikel ini. Bagian ini boleh dilewati dan dibuka kembali kapan saja ketika menemukan istilah yang belum familiar.
+
+### Istilah risiko kredit
+
+- **Default (gagal bayar)**: Kondisi ketika nasabah mengalami kesulitan membayar cicilan. Di dataset ini ditandai dengan TARGET = 1, sedangkan nasabah yang membayar lancar ditandai TARGET = 0.
+- **Default rate**: Persentase pemohon yang gagal bayar dalam suatu kelompok. Contohnya, default rate 8,1% berarti dari 100 pemohon, sekitar 8 orang mengalami kesulitan membayar.
+- **PD (Probability of Default)**: Perkiraan peluang seorang pemohon akan gagal bayar, dihasilkan oleh model dalam bentuk persen. PD 15% berarti dari 100 pemohon dengan profil serupa, sekitar 15 orang diperkirakan gagal bayar.
+- **LGD (Loss Given Default)**: Bagian pinjaman yang benar-benar hilang ketika nasabah gagal bayar, setelah dikurangi hasil penagihan. LGD 45% berarti dari pinjaman 10 juta yang macet, sekitar 4,5 juta tidak kembali.
+- **Expected loss (perkiraan kerugian)**: Perkiraan uang yang hilang akibat gagal bayar, dihitung sebagai jumlah pinjaman dikali LGD. Angka ini dipakai untuk membandingkan kebijakan tanpa model dan dengan model.
+- **Kerugian dicegah**: Selisih expected loss tanpa model dan dengan model, yaitu kerugian yang tidak terjadi karena pemohon berisiko tinggi tidak langsung disetujui.
+- **Margin bunga bersih (NIM)**: Keuntungan bunga yang diperoleh perusahaan dari setiap rupiah pinjaman dalam setahun. Di proyek ini dipakai 13,6% per tahun, dihitung dari laporan publik Home Credit Indonesia.
+- **Keuntungan hilang**: Pendapatan bunga yang tidak jadi diperoleh karena nasabah yang sebenarnya akan membayar lancar ikut ditolak. Ini adalah "harga" dari bersikap terlalu ketat.
+- **Penghematan bersih**: Kerugian yang dicegah dikurangi keuntungan yang hilang. Jika positif, kebijakan dengan model lebih menguntungkan daripada menyetujui semua pemohon.
+- **Skor eksternal**: Skor kelayakan kredit dari lembaga lain di luar Home Credit (EXT_SOURCE_1 sampai 3). Makin tinggi skornya, makin kecil risiko gagal bayar.
+- **Desil**: Cara membagi pemohon menjadi 10 kelompok sama besar menurut suatu nilai. D1 adalah 10% pemohon dengan skor eksternal terendah, D10 adalah 10% dengan skor tertinggi.
+
+### Istilah keputusan kredit
+
+- **Threshold (batas keputusan)**: Angka PD yang dipakai sebagai garis pemisah keputusan. Pemohon dengan PD di atas batas dianggap berisiko, di bawah batas dianggap aman.
+- **Batas approve (12%)**: Pemohon dengan PD di bawah 12% langsung disetujui. Batas ini dipilih dengan mencari F2-score setinggi mungkin, tetapi dengan syarat total biaya tidak boleh lebih mahal daripada tanpa model.
+- **Batas reject (22%)**: Pemohon dengan PD 22% atau lebih ditolak. Batas ini dipilih karena di titik inilah total biaya (kerugian ditambah keuntungan hilang) paling kecil.
+- **Zona Approve, Review, Reject**: Tiga kelompok keputusan hasil dua batas di atas. Approve (PD di bawah 12%) disetujui otomatis, Review (12% sampai 22%) diperiksa analis atau diberi limit lebih kecil, dan Reject (22% ke atas) ditolak.
+- **Limit di zona Review**: Skenario ketika pemohon zona Review tetap dilayani tetapi dengan pinjaman yang dipotong, misalnya hanya 50% dari pengajuan. Tujuannya menjaga pendapatan sambil membatasi risiko.
+
+### Istilah evaluasi model
+
+- **False Negative (FN)**: Pemohon yang nantinya gagal bayar, tetapi diprediksi aman dan disetujui. Kesalahan ini menimbulkan kerugian pinjaman.
+- **False Positive (FP)**: Pemohon yang sebenarnya membayar lancar, tetapi diprediksi berisiko dan ditolak. Kesalahan ini menghilangkan keuntungan bunga.
+- **Confusion matrix**: Tabel 2x2 yang menghitung berapa banyak keputusan benar dan salah: benar disetujui, nasabah baik tersaring (FP), gagal bayar lolos (FN), dan gagal bayar tertangkap.
+- **Recall**: Dari semua pemohon yang benar-benar gagal bayar, berapa persen yang berhasil ditangkap model. Recall 57% berarti 57 dari 100 calon gagal bayar tersaring.
+- **Precision**: Dari semua pemohon yang ditandai berisiko oleh model, berapa persen yang benar-benar gagal bayar. Precision 23% berarti sekitar 1 dari 4 pemohon yang tersaring memang gagal bayar.
+- **F2-score**: Gabungan recall dan precision yang memberi bobot recall empat kali lebih besar. Dipakai karena meloloskan calon gagal bayar jauh lebih mahal daripada menolak nasabah baik.
+- **PR-AUC**: Luas di bawah kurva Precision-Recall, ukuran utama untuk memilih model pada data tidak seimbang. Tebakan acak hanya mendapat 0,081, model ini 0,288.
+- **ROC-AUC dan Gini**: Ukuran seberapa baik model mengurutkan pemohon dari paling aman ke paling berisiko. ROC-AUC 0,5 berarti acak, 1 berarti sempurna. Gini adalah 2 x ROC-AUC dikurangi 1, ukuran yang umum di industri kredit.
+- **KS (Kolmogorov-Smirnov)**: Jarak terbesar antara sebaran skor nasabah lancar dan nasabah gagal bayar. Makin besar, makin jelas model memisahkan keduanya.
+- **Brier score**: Ukuran ketepatan angka probabilitas. Makin kecil makin baik. Brier 0,0655 menunjukkan PD model bisa dibaca apa adanya.
+- **Kalibrasi**: Kesesuaian antara PD yang diprediksi dan kenyataan. Model terkalibrasi baik jika kelompok dengan PD 10% memang gagal bayar sekitar 10%.
+- **Validasi silang (OOF)**: Cara menguji model dengan membagi data latih menjadi beberapa bagian, lalu setiap bagian diprediksi oleh model yang tidak pernah melihatnya. Hasilnya lebih jujur daripada menguji di data yang dipakai untuk belajar.
+- **Class weight**: Teknik memberi bobot lebih pada kelas yang jarang (gagal bayar). Di proyek ini tidak dipakai karena tidak menaikkan PR-AUC dan justru merusak ketepatan angka probabilitas.
+- **Data leakage**: Kebocoran informasi dari masa depan ke dalam data latih, misalnya memakai data yang baru ada setelah pinjaman disetujui. Leakage membuat model terlihat hebat saat diuji tetapi gagal saat dipakai.
+- **SHAP**: Metode untuk menjelaskan mengapa model memberi skor tertentu, dengan membagi skor menjadi sumbangan setiap faktor. Faktor yang menaikkan risiko dan yang menurunkan risiko bisa dilihat satu per satu.
+- **Log-odds**: Skala internal yang dipakai model sebelum hasilnya diubah menjadi persen. Nilai SHAP dinyatakan dalam satuan ini, sehingga yang perlu dibaca adalah arah dan besarnya, bukan angka persennya.
+
+### Istilah teknis dan alat
+
+- **LightGBM**: Algoritma machine learning berbasis gabungan banyak pohon keputusan. Dipilih sebagai model final karena PR-AUC-nya tertinggi dan cepat dilatih.
+- **ETL dan data mart**: ETL (Extract, Transform, Load) adalah proses mengambil data mentah, merapikannya, lalu memuatnya ke gudang data. Data mart adalah tabel siap analisis hasil proses itu, di proyek ini dibuat di Google BigQuery.
+- **Streamlit**: Pustaka Python untuk membuat aplikasi web interaktif. Di proyek ini dipakai untuk menghitung risiko pemohon dan menampilkan alasannya.
+- **Power BI**: Aplikasi dashboard dari Microsoft. Di proyek ini dipakai untuk simulasi kebijakan dan melihat profil risiko per kelompok pemohon.
+
+---
+
 ## Masalah bisnis: dua jenis kesalahan dengan harga yang berbeda
 
 Dari 307.511 pemohon berlabel, sebanyak **24.825 orang (8,07%)** mengalami kesulitan membayar (dalam dataset ditandai `TARGET = 1`). Total pinjaman seluruh pemohon mencapai **184,2 miliar unit mata uang dataset**, dan expected loss historis dari pinjaman yang gagal bayar, dengan asumsi LGD 45%, sekitar **6,23 miliar**. Catatan kecil: dataset tidak menyebut negara atau mata uangnya, sehingga semua nilai uang di artikel ini saya tulis dalam "unit mata uang dataset", dengan M berarti miliar.
@@ -157,16 +211,14 @@ Beberapa fitur dibuat karena lebih bermakna secara bisnis daripada angka mentahn
 
 ### Kolom yang dibuang, dan alasannya
 
-| Kolom | Alasan |
-|---|---|
-| `CODE_GENDER` | Keadilan dan perlindungan konsumen (POJK 22/2023) |
-| `AMT_GOODS_PRICE` | Redundan dengan `AMT_CREDIT` (VIF 115); informasinya disimpan sebagai rasio |
-| `REGION_RATING_CLIENT` | Redundan dengan versi yang memperhitungkan kota (VIF 10,7) |
-| `FLAG_MOBIL`, `FLAG_CONT_MOBILE` | Hampir konstan, tidak membedakan apa pun |
-| Jam dan hari pengajuan | Atribut proses, bukan karakter pemohon |
-| 28 kolom bangunan `_MODE` dan `_MEDI` | Korelasi di atas 0,99 dengan versi `_AVG` |
-| `OBS_60` dan `DEF_60` | Redundan dengan versi 30 hari |
-| 20 kolom `FLAG_DOCUMENT` | Diringkas menjadi `DOC_COUNT` |
+- **`CODE_GENDER`**: Keadilan dan perlindungan konsumen (POJK 22/2023)
+- **`AMT_GOODS_PRICE`**: Redundan dengan `AMT_CREDIT` (VIF 115); informasinya disimpan sebagai rasio
+- **`REGION_RATING_CLIENT`**: Redundan dengan versi yang memperhitungkan kota (VIF 10,7)
+- **`FLAG_MOBIL`, `FLAG_CONT_MOBILE`**: Hampir konstan, tidak membedakan apa pun
+- **Jam dan hari pengajuan**: Atribut proses, bukan karakter pemohon
+- **28 kolom bangunan `_MODE` dan `_MEDI`**: Korelasi di atas 0,99 dengan versi `_AVG`
+- **`OBS_60` dan `DEF_60`**: Redundan dengan versi 30 hari
+- **20 kolom `FLAG_DOCUMENT`**: Diringkas menjadi `DOC_COUNT`
 
 Total fitur yang masuk model: **142**.
 
@@ -199,15 +251,13 @@ Saya membandingkan empat model dengan dua pembanding sederhana, memakai prediksi
 ![Perbandingan model](../docs/assets/fig_model.png)
 *PR-AUC hasil validasi silang di data latih. LightGBM terbaik, sekitar 3,5 kali tebakan acak.*
 
-| Model | PR-AUC (CV) |
-|---|---|
-| Tebakan acak | 0,081 |
-| Aturan skor eksternal | 0,188 |
-| Random Forest | 0,252 |
-| Logistic Regression | 0,261 |
-| XGBoost | 0,279 |
-| LightGBM | 0,280 |
-| Ensemble | 0,280 |
+- **Tebakan acak**: 0,081
+- **Aturan skor eksternal**: 0,188
+- **Random Forest**: 0,252
+- **Logistic Regression**: 0,261
+- **XGBoost**: 0,279
+- **LightGBM**: 0,280
+- **Ensemble**: 0,280
 
 LightGBM (Ke dkk., 2017) menang tipis atas XGBoost. Ensemble tidak memberi tambahan yang berarti, sehingga tidak diadopsi: menambah kerumitan tanpa manfaat bukan pertukaran yang baik.
 
@@ -236,13 +286,11 @@ Saya juga menguji apa yang terjadi jika gender dimasukkan. PR-AUC hanya naik 0,0
 
 Model final diuji pada **20% data yang disisihkan sejak awal (61.503 pemohon)**, yang tidak pernah dipakai untuk melatih maupun memilih model.
 
-| Metrik | Nilai |
-|---|---|
-| PR-AUC | 0,288 (CV 0,280), sekitar 3,6 kali tebakan acak |
-| ROC-AUC | 0,793 |
-| Gini | 0,586 |
-| KS | 0,441 |
-| Brier score | 0,0655 |
+- **PR-AUC**: 0,288 (CV 0,280), sekitar 3,6 kali tebakan acak
+- **ROC-AUC**: 0,793
+- **Gini**: 0,586
+- **KS**: 0,441
+- **Brier score**: 0,0655
 
 Nilai di data uji sedikit di atas hasil CV, tanda bahwa model tidak overfit pada data latih.
 
@@ -278,13 +326,11 @@ Model hanya menghasilkan probabilitas. Keputusan baru muncul ketika kita menetap
 ![Trade-off biaya per threshold](../docs/assets/fig_biaya_threshold.png)
 *Makin rendah threshold, expected loss (merah) turun, tetapi keuntungan yang hilang dari nasabah baik (kuning) naik tajam. Garis hitam adalah total keduanya.*
 
-| Kebijakan | Disetujui | DR disetujui | Expected loss | Keuntungan hilang | Total biaya | vs tanpa model |
-|---|---|---|---|---|---|---|
-| Tanpa model | 100% | 8,07% | 1,24 M | 0 | 1,24 M | - |
-| Aturan skor eksternal | 90,1% | 6,34% | 0,92 M | 0,30 M | 1,22 M | hemat 1,6% |
-| F2 tertinggi (9%) | 72,1% | 3,61% | 0,44 M | 1,01 M | 1,45 M | biaya naik 16,8% |
-| **Terpilih (12%)** | **79,8%** | **4,34%** | **0,57 M** | **0,67 M** | **1,24 M** | **impas (-0,2%)** |
-| Biaya minimum (22%) | 92,0% | 5,85% | 0,87 M | 0,20 M | 1,07 M | hemat 13,7% |
+- **Tanpa model**: disetujui 100%; DR disetujui 8,07%; expected loss 1,24 M; keuntungan hilang 0; total biaya 1,24 M; vs tanpa model -.
+- **Aturan skor eksternal**: disetujui 90,1%; DR disetujui 6,34%; expected loss 0,92 M; keuntungan hilang 0,30 M; total biaya 1,22 M; vs tanpa model hemat 1,6%.
+- **F2 tertinggi (9%)**: disetujui 72,1%; DR disetujui 3,61%; expected loss 0,44 M; keuntungan hilang 1,01 M; total biaya 1,45 M; vs tanpa model biaya naik 16,8%.
+- **Terpilih (12%)**: disetujui 79,8%; DR disetujui 4,34%; expected loss 0,57 M; keuntungan hilang 0,67 M; total biaya 1,24 M; vs tanpa model impas (-0,2%).
+- **Biaya minimum (22%)**: disetujui 92,0%; DR disetujui 5,85%; expected loss 0,87 M; keuntungan hilang 0,20 M; total biaya 1,07 M; vs tanpa model hemat 13,7%.
 
 ![Total biaya per kebijakan](../docs/assets/fig_kebijakan.png)
 *Total biaya per kebijakan. Merah adalah kerugian gagal bayar, kuning adalah margin yang hilang dari nasabah baik yang ditolak.*
@@ -306,11 +352,9 @@ Satu threshold memaksa keputusan hitam putih. Padahal, banyak pemohon yang tersa
 ![Kebijakan 3 zona](../docs/assets/fig_zona.png)
 *Default rate per zona di data uji. Garis putus-putus adalah rata-rata 8,1%.*
 
-| Zona | Batas PD | Porsi pemohon | Default rate | Porsi dari seluruh gagal bayar |
-|---|---|---|---|---|
-| Approve | di bawah 12% | 79,8% | 4,3% | 42,9% |
-| Review | 12% sampai di bawah 22% | 12,2% | 15,7% | 23,7% |
-| Reject | 22% ke atas | 8,0% | 33,6% | 33,3% |
+- **Approve**: batas PD di bawah 12%; porsi pemohon 79,8%; default rate 4,3%; porsi dari seluruh gagal bayar 42,9%.
+- **Review**: batas PD 12% sampai di bawah 22%; porsi pemohon 12,2%; default rate 15,7%; porsi dari seluruh gagal bayar 23,7%.
+- **Reject**: batas PD 22% ke atas; porsi pemohon 8,0%; default rate 33,6%; porsi dari seluruh gagal bayar 33,3%.
 
 Zona Reject hanya berisi 8% pemohon tetapi menangkap sepertiga seluruh gagal bayar; satu dari tiga pemohon di zona ini gagal bayar. Zona Review tidak ditolak, melainkan diberi perlakuan khusus: limit dikurangi, tenor diperpendek, atau diminta uang muka. Dengan begitu, perusahaan tetap mendapat margin dari mayoritas nasabah Review yang lancar, sambil menekan eksposur pada yang berisiko.
 
