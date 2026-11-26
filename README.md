@@ -331,6 +331,17 @@ Faktor paling berpengaruh: rata-rata skor eksternal (0,247), perkiraan tenor (0,
 - **Bukan biaya minimum (22%)** karena recall-nya hanya sekitar 32% dan sangat bergantung pada asumsi margin dan LGD.
 - **Batas 12% terpilih:** expected loss turun 53,7% (0,67 M dicegah di data uji, sekitar 3,3 M bila diterapkan ke seluruh 307 ribu pemohon historis).
 
+**Catatan: tabel di atas memperlakukan zona Review sebagai ditolak.** Fungsi kebijakan di NB 04 hanya mengenal satu batas (tolak jika PD ≥ 12%), sehingga hasil "impas" adalah skenario paling konservatif. Rekomendasinya justru zona Review tetap dilayani dengan limit lebih kecil. Simulator di halaman *Performa & Kebijakan* aplikasi Streamlit menghitung skenario itu:
+
+| Perlakuan zona Review (PD 12% sampai di bawah 22%) | Expected loss | Keuntungan hilang | Total biaya | vs tanpa model |
+|---|---|---|---|---|
+| Ditolak (seperti tabel di atas) | 0,59 M | 0,66 M | 1,25 M | impas (-0,5%) |
+| Disetujui, limit dipotong 50% | 0,73 M | 0,43 M | 1,17 M | hemat 6,3% |
+
+Asumsi skenario potong limit: kerugian dan margin turun sebanding dengan limit (50%), dan peluang gagal bayar tidak berubah. Kenyataannya pinjaman lebih kecil bisa menurunkan peluang gagal bayar (cicilan lebih ringan), tetapi nasabah juga bisa menolak tawaran atau pindah ke pemberi pinjaman lain. Biaya analis untuk meninjau sekitar 12% pengajuan belum dihitung. Karena itu angka ini perlu diuji lewat uji coba bertahap sebelum diklaim.
+
+**Catatan konsistensi angka.** Angka di README, halaman portfolio, artikel, dan slide berasal dari NB 04. Aplikasi Streamlit dan dashboard Power BI memakai skor data uji yang dibuat ulang oleh `build_policy_data.py` (melatih ulang pipeline yang sama). Karena TargetEncoder memakai cross-fitting acak, skor itu sedikit berbeda (ROC-AUC 0,788 vs 0,793), sehingga pada batas 12% aplikasi menampilkan expected loss turun sekitar 52,7% dan default rate disetujui sekitar 4,41%, bukan 53,7% dan 4,34%. Tabel skenario di atas memakai skor aplikasi.
+
 ### Sensitivitas LGD
 
 | LGD | Penghematan bersih threshold 12% |
